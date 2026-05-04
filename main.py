@@ -3,7 +3,7 @@ from tkinter import messagebox
 
 import math
 
-mapa = [
+[
 ['CostaRica', [
 ['Alajuela', [
 ['Grecia', [[[0, 0, 1], [10, 0, 0]], [[10, 0, 0], [0, 0, 1]]], ['Cuarzo', 'Granito', 'Basalto']],
@@ -109,6 +109,7 @@ def agregar_mineral_a_condado(mapa, pais, estado, condado, nombre_mineral):
                         if condado_actual[0] == condado:
                             if nombre_mineral not in condado_actual[2]:
                                 condado_actual[2].append(nombre_mineral)
+                                guardar_mapa()
                                 return True
                             return False
 
@@ -123,6 +124,7 @@ def eliminar_mineral_de_condado(mapa, pais, estado, condado, nombre_mineral):
                         if condado_actual[0] == condado:
                             if nombre_mineral in condado_actual[2]:
                                 condado_actual[2].remove(nombre_mineral)
+                                guardar_mapa()
                                 return True
                             return False
 
@@ -139,6 +141,7 @@ def agregar_condado(mapa, pais, estado, nombre_condado, coordenadas, minerales):
 
                     nuevo_condado = [nombre_condado, coordenadas, minerales]
                     estado_actual[1].append(nuevo_condado)
+                    guardar_mapa()
                     return True
 
     return False
@@ -151,6 +154,7 @@ def eliminar_condado(mapa, pais, estado, nombre_condado):
                     for condado_actual in estado_actual[1]:
                         if condado_actual[0] == nombre_condado:
                             estado_actual[1].remove(condado_actual)
+                            guardar_mapa()
                             return True
 
     return False
@@ -349,7 +353,45 @@ def minerales_por_pais():
         ])
 
     return resultado
+# ---------------------------------------------------------
+# ARCHIVO DEL MAPA
+# El mapa ahora se carga desde mapa.txt
+# ---------------------------------------------------------
 
+FILE_PATH_MAPA = 'mapa.txt'
+mapa = []
+
+
+# I: path, access_mode: append, override, valor a escribir
+def write_file(path, access_mode, string):
+    mode = 'a' if access_mode.upper() == 'APPEND' else 'w'
+    with open(path, mode,encoding="utf-8") as file:
+        file.write(string)
+
+
+# I: path
+def read_file(path):
+    with open(path, 'r',encoding="utf-8") as file:
+        return file.read()
+
+
+# Guarda el mapa completo en el archivo
+def guardar_mapa():
+    write_file(FILE_PATH_MAPA, 'w', str(mapa))
+
+
+# Lee mapa.txt y carga la lista en memoria
+def cargar_mapa():
+    try:
+        global mapa
+        strValue = read_file(FILE_PATH_MAPA)
+        mapa = eval(strValue)
+    except:
+        mapa = []
+
+def recargar_mapa_archivo():
+    cargar_mapa()
+    messagebox.showinfo("Mapa cargado", "El mapa fue cargado desde mapa.txt")
 
 # ---------------------------------------------------------
 # FUNCIONES DE APOYO PARA LA INTERFAZ
@@ -1165,7 +1207,12 @@ def iniciar_interfaz_mantenimiento():
               font=("Arial", 11, "bold"),
               width=17, height=2,
               command=pantalla_analisis).pack(pady=7)
-
+    tk.Button(menu, text="Recargar mapa",
+            bg=COLOR_BOTON, fg=COLOR_OSCURO,
+            activebackground=COLOR_BOTON_OSCURO,
+            font=("Arial", 11, "bold"),
+            width=17, height=2,
+            command=recargar_mapa_archivo).pack(pady=7)
     tk.Button(menu, text="Salir",
               bg=COLOR_ERROR, fg=COLOR_TEXTO,
               activebackground=COLOR_ERROR,
@@ -1208,5 +1255,5 @@ def iniciar_interfaz_mantenimiento():
 
     ventana_mantenimiento.mainloop()
 
-
+cargar_mapa()
 iniciar_interfaz_mantenimiento()
