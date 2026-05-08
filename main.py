@@ -582,6 +582,7 @@ def capturar_mineral(mineral):
 def limpiar_juego():
     for widget in area_juego.winfo_children():
         widget.destroy()
+        
 
 
 def mostrar_texto_juego(texto):
@@ -683,63 +684,105 @@ def marcar_punto_juego(longitud, latitud):
     canvas_juego.create_oval(x - 6, y - 6, x + 6, y + 6,
                              fill=COLOR_ERROR, outline="white", width=2,
                              tags="punto")
+    
+def mostrar_botones_juego_iniciado():
+    boton_partida_juego.pack(pady=7)
+    boton_historial_juego.pack(pady=7)
 
+def limpiar_sesion_juego():
+    global jugador_actual
+    global intentos_restantes
+    global ubicacion_actual
+    global minerales_actuales
 
+    jugador_actual = ""
+    intentos_restantes = 0
+    ubicacion_actual = []
+    minerales_actuales = []
+def comenzar_juego_inicio():
+    global entrada_nombre_inicio
+
+    nombre = entrada_nombre_inicio.get().strip()
+
+    if nombre == "":
+        messagebox.showerror("Error", "Debe ingresar un nombre.")
+        return
+
+    jugador_existente = buscar_player(nombre)
+
+    resultado = iniciar_partida(nombre)
+
+    if resultado:
+        mostrar_botones_juego_iniciado()
+
+        if jugador_existente != []:
+            messagebox.showinfo("Jugador encontrado", "Bienvenido de nuevo, " + nombre + ".")
+        else:
+            messagebox.showinfo("Jugador creado", "Bienvenido, " + nombre + ".")
+
+        pantalla_partida()
+    else:
+        messagebox.showerror("Error", "No se pudo iniciar la partida.")
 def pantalla_inicio_juego():
+    global entrada_nombre_inicio
+
     limpiar_juego()
+
+    panel_resultado.pack_forget()
 
     titulo = tk.Label(area_juego, text="Mineral Hunter",
                       bg=COLOR_FONDO, fg=COLOR_BOTON,
-                      font=("Arial", 26, "bold"))
-    titulo.pack(pady=(35, 8))
+                      font=("Arial", 32, "bold"))
+    titulo.pack(pady=(45, 8))
 
     subtitulo = tk.Label(area_juego,
-                         text="Ingresa tu nombre para iniciar una nueva partida.",
+                         text="Ingresa tu cuenta para comenzar la exploración.",
                          bg=COLOR_FONDO, fg=COLOR_TEXTO,
-                         font=("Arial", 12))
+                         font=("Arial", 13))
     subtitulo.pack(pady=(0, 25))
 
-    panel = tk.Frame(area_juego, bg=COLOR_PANEL_CLARO)
-    panel.pack(pady=10)
+    panel = tk.Frame(area_juego, bg=COLOR_PANEL_CLARO, width=560, height=240)
+    panel.pack(pady=15)
+    panel.pack_propagate(False)
 
-    tk.Label(panel, text="Nombre del jugador:",
+    contenido = tk.Frame(panel, bg=COLOR_PANEL_CLARO)
+    contenido.place(relx=0.5, rely=0.5, anchor="center")
+
+    tk.Label(contenido, text="Acceso del jugador",
              bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 12, "bold")).grid(row=0, column=0, padx=15, pady=18)
+             font=("Arial", 16, "bold")).grid(row=0, column=0, columnspan=2, pady=(0, 18))
 
-    entrada_nombre = tk.Entry(panel, bg=COLOR_ENTRADA, width=24, font=("Arial", 12))
-    entrada_nombre.grid(row=0, column=1, padx=15, pady=18)
+    tk.Label(contenido, text="Nombre:",
+             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
+             font=("Arial", 12, "bold")).grid(row=1, column=0, padx=(0, 12), pady=8, sticky="e")
 
-    def comenzar():
-        nombre = entrada_nombre.get().strip()
+    entrada_nombre_inicio = tk.Entry(contenido,
+                                     bg=COLOR_ENTRADA,
+                                     width=24,
+                                     font=("Arial", 13),
+                                     justify="center")
+    entrada_nombre_inicio.grid(row=1, column=1, pady=8, ipady=4)
+    entrada_nombre_inicio.focus()
 
-        if nombre == "":
-            messagebox.showerror("Error", "Debe ingresar un nombre.")
-            return
+    tk.Label(contenido,
+             text="Si la cuenta no existe, se creará una nueva.",
+             bg=COLOR_PANEL_CLARO, fg=COLOR_BOTON,
+             font=("Arial", 10, "bold")).grid(row=2, column=0, columnspan=2, pady=(14, 18))
 
-        resultado = iniciar_partida(nombre)
-
-        if resultado:
-            pantalla_partida()
-        else:
-            messagebox.showerror("Error", "No se pudo iniciar la partida.")
-
-    tk.Button(panel, text="Iniciar partida",
+    tk.Button(contenido, text="Iniciar partida",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
               activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 11, "bold"),
+              font=("Arial", 12, "bold"),
               width=18, height=2,
-              command=comenzar).grid(row=1, column=0, columnspan=2, pady=(0, 18))
-
-    tk.Button(area_juego, text="Ver historial",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 11, "bold"),
-              width=18, height=2,
-              command=pantalla_historial_juego).pack(pady=10)
+              command=comenzar_juego_inicio).grid(row=3, column=0, columnspan=2, pady=(0, 5))
 
 
 def pantalla_partida():
+    if jugador_actual == "":
+        pantalla_inicio_juego()
+        return
     limpiar_juego()
+    panel_resultado.pack(side=tk.BOTTOM, fill=tk.X, padx=20, pady=(5, 18))
 
     encabezado = tk.Frame(area_juego, bg=COLOR_FONDO)
     encabezado.pack(fill="x", padx=25, pady=(18, 8))
@@ -901,7 +944,11 @@ def pantalla_partida():
 
 
 def pantalla_historial_juego():
+    if jugador_actual == "":
+        pantalla_inicio_juego()
+        return
     limpiar_juego()
+    panel_resultado.pack(side=tk.BOTTOM, fill=tk.X, padx=20, pady=(5, 18))
 
     titulo = tk.Label(area_juego, text="Historial de capturas",
                       bg=COLOR_FONDO, fg=COLOR_BOTON,
@@ -913,7 +960,7 @@ def pantalla_historial_juego():
 
     tk.Label(panel, text="Nombre del jugador:",
              bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 11, "bold")).grid(row=0, column=0, padx=10, pady=12)
+             font=("Arial", 15, "bold")).grid(row=0, column=0, padx=10, pady=12)
 
     entrada_nombre = tk.Entry(panel, bg=COLOR_ENTRADA, width=24, font=("Arial", 11))
     entrada_nombre.grid(row=0, column=1, padx=10, pady=12)
@@ -958,6 +1005,10 @@ def iniciar_interfaz_juego():
     global ventana_juego
     global area_juego
     global texto_juego
+    global boton_partida_juego
+    global boton_historial_juego
+    global panel_resultado
+    limpiar_sesion_juego()
 
     ventana_juego = tk.Tk()
     ventana_juego.title("Mineral Global Tracker - Juego")
@@ -986,26 +1037,26 @@ def iniciar_interfaz_juego():
               width=17, height=2,
               command=pantalla_inicio_juego).pack(pady=7)
 
-    tk.Button(menu, text="Partida",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 11, "bold"),
-              width=17, height=2,
-              command=pantalla_partida).pack(pady=7)
+    boton_partida_juego = tk.Button(menu, text="Partida",
+                                    bg=COLOR_BOTON, fg=COLOR_OSCURO,
+                                    activebackground=COLOR_BOTON_OSCURO,
+                                    font=("Arial", 11, "bold"),
+                                    width=17, height=2,
+                                    command=pantalla_partida)
 
-    tk.Button(menu, text="Historial",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 11, "bold"),
-              width=17, height=2,
-              command=pantalla_historial_juego).pack(pady=7)
+    boton_historial_juego = tk.Button(menu, text="Historial",
+                                      bg=COLOR_BOTON, fg=COLOR_OSCURO,
+                                      activebackground=COLOR_BOTON_OSCURO,
+                                      font=("Arial", 11, "bold"),
+                                      width=17, height=2,
+                                      command=pantalla_historial_juego)
 
     tk.Button(menu, text="Salir",
-          bg=COLOR_ERROR, fg=COLOR_TEXTO,
-          activebackground=COLOR_ERROR,
-          font=("Arial", 11, "bold"),
-          width=17, height=2,
-          command=volver_menu_desde_juego).pack(pady=(30, 10))
+              bg=COLOR_ERROR, fg=COLOR_TEXTO,
+              activebackground=COLOR_ERROR,
+              font=("Arial", 11, "bold"),
+              width=17, height=2,
+              command=volver_menu_desde_juego).pack(pady=(30, 10))
 
     area_juego = tk.Frame(zona_derecha, bg=COLOR_FONDO)
     area_juego.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -1042,6 +1093,7 @@ def iniciar_interfaz_juego():
 
 
 def volver_menu_desde_juego():
+    limpiar_sesion_juego()
     ventana_juego.destroy()
     iniciar_menu_principal()
 
@@ -1049,6 +1101,14 @@ def volver_menu_desde_juego():
 # ---------------------------------------------------------
 # MENÚ PRINCIPAL
 # ---------------------------------------------------------
+
+def abrir_juego():
+        ventana_menu.destroy()
+        iniciar_interfaz_juego()
+
+def abrir_mantenimiento():
+    ventana_menu.destroy()
+    iniciar_interfaz_mantenimiento()
 
 def iniciar_menu_principal():
     global ventana_menu
@@ -1061,18 +1121,7 @@ def iniciar_menu_principal():
     tk.Label(ventana_menu, text="MINERAL GLOBAL TRACKER",
              bg=COLOR_FONDO, fg=COLOR_BOTON,
              font=("Arial", 25, "bold")).pack(pady=(45, 8))
-
-    tk.Label(ventana_menu, text="Seleccione una opción",
-             bg=COLOR_FONDO, fg=COLOR_TEXTO,
-             font=("Arial", 12)).pack(pady=(0, 30))
-
-    def abrir_juego():
-        ventana_menu.destroy()
-        iniciar_interfaz_juego()
-
-    def abrir_mantenimiento():
-        ventana_menu.destroy()
-        iniciar_interfaz_mantenimiento()
+    
 
     tk.Button(ventana_menu, text="Juego",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
@@ -1210,34 +1259,25 @@ def pantalla_navegacion():
                       font=("Arial", 22, "bold"))
     titulo.pack(anchor="w", padx=25, pady=(18, 5))
 
-    subtitulo = tk.Label(area_trabajo,
-                         text="Consulta países, estados, condados y minerales del mapa.",
-                         bg=COLOR_FONDO, fg=COLOR_TEXTO,
-                         font=("Arial", 11))
-    subtitulo.pack(anchor="w", padx=25, pady=(0, 12))
-
     panel = tk.Frame(area_trabajo, bg=COLOR_PANEL_CLARO)
     panel.pack(fill="x", padx=25, pady=8)
 
     bloque_paises = tk.LabelFrame(panel, text="Listar países",
                                   bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                                  font=("Arial", 11, "bold"))
+                                  font=("Arial", 15, "bold"))
     bloque_paises.grid(row=0, column=0, padx=12, pady=12, sticky="nsew")
 
-    tk.Label(bloque_paises, text="Muestra todos los países registrados.",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 10)).pack(padx=10, pady=8)
 
-    tk.Button(bloque_paises, text="Mostrar",
+    tk.Button(bloque_paises, text="Mostrar Países",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
               activebackground=COLOR_BOTON_OSCURO,
               font=("Arial", 10, "bold"),
-              width=15, height=2,
+              width=20, height=2,
               command=lambda: mostrar_resultado("Países registrados", listar_paises(mapa))).pack(pady=8)
 
     bloque_estados = tk.LabelFrame(panel, text="Listar estados",
                                    bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                                   font=("Arial", 11, "bold"))
+                                   font=("Arial", 15, "bold"))
     bloque_estados.grid(row=0, column=1, padx=12, pady=12, sticky="nsew")
 
     tk.Label(bloque_estados, text="País:",
@@ -1245,20 +1285,20 @@ def pantalla_navegacion():
              font=("Arial", 10)).grid(row=0, column=0, padx=8, pady=8, sticky="w")
 
     entrada_pais_estados = tk.Entry(bloque_estados, bg=COLOR_ENTRADA, width=22,
-                                    font=("Arial", 11))
+                                    font=("Arial", 13))
     entrada_pais_estados.grid(row=0, column=1, padx=8, pady=8)
 
-    tk.Button(bloque_estados, text="Mostrar",
+    tk.Button(bloque_estados, text="Mostrar Estados",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
               activebackground=COLOR_BOTON_OSCURO,
               font=("Arial", 10, "bold"),
-              width=15, height=2,
+              width=20, height=2,
               command=lambda: mostrar_resultado("Estados encontrados",
-                                                listar_estados(mapa, texto_normal(entrada_pais_estados.get())))).grid(row=1, column=0, columnspan=2, pady=8)
+                                                listar_estados(mapa, texto_normal(entrada_pais_estados.get())))).grid(row=1, column=1, pady=8)
 
     bloque_condados = tk.LabelFrame(panel, text="Listar condados",
                                     bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                                    font=("Arial", 11, "bold"))
+                                    font=("Arial", 15, "bold"))
     bloque_condados.grid(row=1, column=0, padx=12, pady=12, sticky="nsew")
 
     tk.Label(bloque_condados, text="País:",
@@ -1277,19 +1317,19 @@ def pantalla_navegacion():
                                        font=("Arial", 11))
     entrada_estado_condados.grid(row=1, column=1, padx=8, pady=6)
 
-    tk.Button(bloque_condados, text="Mostrar",
+    tk.Button(bloque_condados, text="Mostrar Condados",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
               activebackground=COLOR_BOTON_OSCURO,
               font=("Arial", 10, "bold"),
-              width=15, height=2,
+              width=20, height=2,
               command=lambda: mostrar_resultado("Condados encontrados",
                                                 listar_condados(mapa,
                                                                 texto_normal(entrada_pais_condados.get()),
-                                                                texto_normal(entrada_estado_condados.get())))).grid(row=2, column=0, columnspan=2, pady=8)
+                                                                texto_normal(entrada_estado_condados.get())))).grid(row=2, column=1, pady=8)
 
     bloque_minerales = tk.LabelFrame(panel, text="Minerales en condado",
                                      bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                                     font=("Arial", 11, "bold"))
+                                     font=("Arial", 15, "bold"))
     bloque_minerales.grid(row=1, column=1, padx=12, pady=12, sticky="nsew")
 
     tk.Label(bloque_minerales, text="País:",
@@ -1316,16 +1356,16 @@ def pantalla_navegacion():
                                          font=("Arial", 11))
     entrada_condado_minerales.grid(row=2, column=1, padx=8, pady=5)
 
-    tk.Button(bloque_minerales, text="Mostrar",
+    tk.Button(bloque_minerales, text="Mostrar Minerales",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
               activebackground=COLOR_BOTON_OSCURO,
               font=("Arial", 10, "bold"),
-              width=15, height=2,
+              width=20, height=2,
               command=lambda: mostrar_resultado("Minerales encontrados",
                                                 minerales_en_condado(mapa,
                                                                      texto_normal(entrada_pais_minerales.get()),
                                                                      texto_normal(entrada_estado_minerales.get()),
-                                                                     texto_normal(entrada_condado_minerales.get())))).grid(row=3, column=0, columnspan=2, pady=8)
+                                                                     texto_normal(entrada_condado_minerales.get())))).grid(row=3, column=1, pady=8)
 
     panel.grid_columnconfigure(0, weight=1)
     panel.grid_columnconfigure(1, weight=1)
@@ -1334,7 +1374,28 @@ def pantalla_navegacion():
 # ---------------------------------------------------------
 # PANTALLA: MINERALES
 # ---------------------------------------------------------
+def ejecutar_agregar_mineral(pais, estado, condado, mineral):
+    resultado = agregar_mineral_a_condado(mapa, pais, estado, condado, mineral)
 
+    if resultado:
+        messagebox.showinfo("Correcto", "Mineral agregado correctamente.")
+    else:
+        messagebox.showerror("Error", "No se pudo agregar. Revise los datos o si el mineral ya existe.")
+
+    mostrar_resultado("Minerales actuales",
+                      minerales_en_condado(mapa, pais, estado, condado))
+    
+def ejecutar_eliminar_mineral(pais, estado, condado, mineral):
+    resultado = eliminar_mineral_de_condado(mapa, pais, estado, condado, mineral)
+
+    if resultado:
+        messagebox.showinfo("Correcto", "Mineral eliminado correctamente.")
+    else:
+        messagebox.showerror("Error", "No se pudo eliminar. Revise los datos.")
+
+    mostrar_resultado("Minerales actuales",
+                      minerales_en_condado(mapa, pais, estado, condado))
+    
 def pantalla_minerales():
     limpiar_area_trabajo()
 
@@ -1343,18 +1404,12 @@ def pantalla_minerales():
                       font=("Arial", 22, "bold"))
     titulo.pack(anchor="w", padx=25, pady=(18, 5))
 
-    subtitulo = tk.Label(area_trabajo,
-                         text="Agrega o elimina minerales de un condado existente.",
-                         bg=COLOR_FONDO, fg=COLOR_TEXTO,
-                         font=("Arial", 11))
-    subtitulo.pack(anchor="w", padx=25, pady=(0, 12))
-
     panel = tk.Frame(area_trabajo, bg=COLOR_PANEL_CLARO)
     panel.pack(fill="x", padx=25, pady=8)
 
-    bloque_agregar = tk.LabelFrame(panel, text="Agregar mineral",
+    bloque_agregar = tk.LabelFrame(panel, text="Agregar Mineral",
                                    bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                                   font=("Arial", 11, "bold"))
+                                   font=("Arial", 15, "bold"))
     bloque_agregar.grid(row=0, column=0, padx=15, pady=15, sticky="nsew")
 
     tk.Label(bloque_agregar, text="País:", bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO).grid(row=0, column=0, sticky="w", padx=8, pady=6)
@@ -1373,34 +1428,22 @@ def pantalla_minerales():
     entrada_mineral_agregar = tk.Entry(bloque_agregar, bg=COLOR_ENTRADA, width=22, font=("Arial", 11))
     entrada_mineral_agregar.grid(row=3, column=1, padx=8, pady=6)
 
-    def ejecutar_agregar_mineral():
-        resultado = agregar_mineral_a_condado(mapa,
-                                              texto_normal(entrada_pais_agregar.get()),
-                                              texto_normal(entrada_estado_agregar.get()),
-                                              texto_normal(entrada_condado_agregar.get()),
-                                              texto_normal(entrada_mineral_agregar.get()))
 
-        if resultado:
-            messagebox.showinfo("Correcto", "Mineral agregado correctamente.")
-        else:
-            messagebox.showerror("Error", "No se pudo agregar. Revise los datos o si el mineral ya existe.")
-
-        mostrar_resultado("Minerales actuales",
-                          minerales_en_condado(mapa,
-                                               texto_normal(entrada_pais_agregar.get()),
-                                               texto_normal(entrada_estado_agregar.get()),
-                                               texto_normal(entrada_condado_agregar.get())))
-
-    tk.Button(bloque_agregar, text="Agregar",
+    tk.Button(bloque_agregar, text="Agregar Mineral",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
               activebackground=COLOR_BOTON_OSCURO,
               font=("Arial", 10, "bold"),
-              width=15, height=2,
-              command=ejecutar_agregar_mineral).grid(row=4, column=0, columnspan=2, pady=12)
+              width=20, height=2,
+              command=lambda:ejecutar_agregar_mineral(
+              texto_normal(entrada_pais_agregar.get()),
+              texto_normal(entrada_estado_agregar.get()),
+              texto_normal(entrada_condado_agregar.get()),
+              texto_normal(entrada_mineral_agregar.get())
+          )).grid(row=4, column=1, pady=12)
 
-    bloque_eliminar = tk.LabelFrame(panel, text="Eliminar mineral",
+    bloque_eliminar = tk.LabelFrame(panel, text="Eliminar Mineral",
                                     bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                                    font=("Arial", 11, "bold"))
+                                    font=("Arial", 15, "bold"))
     bloque_eliminar.grid(row=0, column=1, padx=15, pady=15, sticky="nsew")
 
     tk.Label(bloque_eliminar, text="País:", bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO).grid(row=0, column=0, sticky="w", padx=8, pady=6)
@@ -1419,30 +1462,18 @@ def pantalla_minerales():
     entrada_mineral_eliminar = tk.Entry(bloque_eliminar, bg=COLOR_ENTRADA, width=22, font=("Arial", 11))
     entrada_mineral_eliminar.grid(row=3, column=1, padx=8, pady=6)
 
-    def ejecutar_eliminar_mineral():
-        resultado = eliminar_mineral_de_condado(mapa,
-                                                texto_normal(entrada_pais_eliminar.get()),
-                                                texto_normal(entrada_estado_eliminar.get()),
-                                                texto_normal(entrada_condado_eliminar.get()),
-                                                texto_normal(entrada_mineral_eliminar.get()))
 
-        if resultado:
-            messagebox.showinfo("Correcto", "Mineral eliminado correctamente.")
-        else:
-            messagebox.showerror("Error", "No se pudo eliminar. Revise los datos.")
-
-        mostrar_resultado("Minerales actuales",
-                          minerales_en_condado(mapa,
-                                               texto_normal(entrada_pais_eliminar.get()),
-                                               texto_normal(entrada_estado_eliminar.get()),
-                                               texto_normal(entrada_condado_eliminar.get())))
-
-    tk.Button(bloque_eliminar, text="Eliminar",
-              bg=COLOR_ERROR, fg=COLOR_TEXTO,
-              activebackground=COLOR_ERROR,
-              font=("Arial", 10, "bold"),
-              width=15, height=2,
-              command=ejecutar_eliminar_mineral).grid(row=4, column=0, columnspan=2, pady=12)
+    tk.Button(bloque_eliminar, text="Eliminar Mineral",
+          bg=COLOR_ERROR, fg=COLOR_TEXTO,
+          activebackground=COLOR_ERROR,
+          font=("Arial", 10, "bold"),
+          width=20, height=2,
+          command=lambda: ejecutar_eliminar_mineral(
+              texto_normal(entrada_pais_eliminar.get()),
+              texto_normal(entrada_estado_eliminar.get()),
+              texto_normal(entrada_condado_eliminar.get()),
+              texto_normal(entrada_mineral_eliminar.get())
+          )).grid(row=4, column=1, pady=12)
 
     panel.grid_columnconfigure(0, weight=1)
     panel.grid_columnconfigure(1, weight=1)
@@ -1451,6 +1482,56 @@ def pantalla_minerales():
 # ---------------------------------------------------------
 # PANTALLA: CONDADOS
 # ---------------------------------------------------------
+def agregar_condado_interfaz(pais, estado, nombre_condado, lon1_texto, lat1_texto, lon2_texto, lat2_texto, minerales_texto):
+    lon1 = leer_coordenada(lon1_texto)
+    lat1 = leer_coordenada(lat1_texto)
+    lon2 = leer_coordenada(lon2_texto)
+    lat2 = leer_coordenada(lat2_texto)
+
+    if lon1 == False or lat1 == False or lon2 == False or lat2 == False:
+        messagebox.showerror("Error", "Revise las coordenadas. Use: grados,minutos,segundos")
+        return
+
+    coordenadas = [[lon1, lat1], [lon2, lat2]]
+    minerales = leer_minerales(minerales_texto)
+
+    resultado = agregar_condado(
+        mapa,
+        texto_normal(pais),
+        texto_normal(estado),
+        texto_normal(nombre_condado),
+        coordenadas,
+        minerales
+    )
+
+    if resultado:
+        messagebox.showinfo("Correcto", "Condado agregado correctamente.")
+    else:
+        messagebox.showerror("Error", "No se pudo agregar. Revise país, estado o si ya existe.")
+
+    mostrar_resultado(
+        "Condados actuales",
+        listar_condados(mapa, texto_normal(pais), texto_normal(estado))
+    )
+
+
+def eliminar_condado_interfaz(pais, estado, nombre_condado):
+    resultado = eliminar_condado(
+        mapa,
+        texto_normal(pais),
+        texto_normal(estado),
+        texto_normal(nombre_condado)
+    )
+
+    if resultado:
+        messagebox.showinfo("Correcto", "Condado eliminado correctamente.")
+    else:
+        messagebox.showerror("Error", "No se pudo eliminar. Revise los datos.")
+
+    mostrar_resultado(
+        "Condados actuales",
+        listar_condados(mapa, texto_normal(pais), texto_normal(estado))
+    )
 
 def pantalla_condados():
     limpiar_area_trabajo()
@@ -1458,13 +1539,10 @@ def pantalla_condados():
     titulo = tk.Label(area_trabajo, text="Mantenimiento de condados",bg=COLOR_FONDO, fg=COLOR_BOTON,font=("Arial", 22, "bold"))
     titulo.pack(anchor="w", padx=25, pady=(18, 5))
 
-    subtitulo = tk.Label(area_trabajo,text="Agrega condados nuevos o elimina condados existentes.",bg=COLOR_FONDO, fg=COLOR_TEXTO,font=("Arial", 11))
-    subtitulo.pack(anchor="w", padx=25, pady=(0, 12))
-
     panel = tk.Frame(area_trabajo, bg=COLOR_PANEL_CLARO)
     panel.pack(fill="x", padx=25, pady=8)
 
-    bloque_agregar = tk.LabelFrame(panel, text="Agregar condado",bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,font=("Arial", 11, "bold"))
+    bloque_agregar = tk.LabelFrame(panel, text="Agregar Condado",bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,font=("Arial", 15, "bold"))
     bloque_agregar.grid(row=0, column=0, padx=15, pady=15, sticky="nsew")
 
     etiquetas = ["País:", "Estado:", "Condado:", "Longitud punto 1:", "Latitud punto 1:","Longitud punto 2:", "Latitud punto 2:", "Minerales:"]
@@ -1487,45 +1565,22 @@ def pantalla_condados():
     entrada_lat2 = entradas[6]
     entrada_minerales_nuevo = entradas[7]
 
-    ayuda = tk.Label(bloque_agregar,text="Coordenadas: grados,minutos,segundos    Minerales: Oro,Cobre,Hierro",bg=COLOR_PANEL_CLARO, fg=COLOR_BOTON,font=("Arial", 9))
-    ayuda.grid(row=8, column=0, columnspan=2, padx=8, pady=6)
 
-    def ejecutar_agregar_condado():
-        lon1 = leer_coordenada(entrada_lon1.get())
-        lat1 = leer_coordenada(entrada_lat1.get())
-        lon2 = leer_coordenada(entrada_lon2.get())
-        lat2 = leer_coordenada(entrada_lat2.get())
-
-        if lon1 == False or lat1 == False or lon2 == False or lat2 == False:
-            messagebox.showerror("Error", "Revise las coordenadas. Use: grados,minutos,segundos")
-            return
-
-        coordenadas = [[lon1, lat1], [lon2, lat2]]
-        minerales = leer_minerales(entrada_minerales_nuevo.get())
-
-        resultado = agregar_condado(mapa,
-                                    texto_normal(entrada_pais_nuevo.get()),
-                                    texto_normal(entrada_estado_nuevo.get()),
-                                    texto_normal(entrada_condado_nuevo.get()),
-                                    coordenadas,
-                                    minerales)
-
-        if resultado:
-            messagebox.showinfo("Correcto", "Condado agregado correctamente.")
-        else:
-            messagebox.showerror("Error", "No se pudo agregar. Revise país, estado o si ya existe.")
-
-        mostrar_resultado("Condados actuales",
-listar_condados(mapa,
-                                          texto_normal(entrada_pais_nuevo.get()),
-                                          texto_normal(entrada_estado_nuevo.get())))
-
-    tk.Button(bloque_agregar, text="Agregar",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 10, "bold"),
-              width=15, height=2,
-              command=ejecutar_agregar_condado).grid(row=9, column=0, columnspan=2, pady=10)
+    tk.Button(bloque_agregar, text="Agregar Condado",
+          bg=COLOR_BOTON, fg=COLOR_OSCURO,
+          activebackground=COLOR_BOTON_OSCURO,
+          font=("Arial", 10, "bold"),
+          width=15, height=2,
+          command=lambda: agregar_condado_interfaz(
+              entrada_pais_nuevo.get(),
+              entrada_estado_nuevo.get(),
+              entrada_condado_nuevo.get(),
+              entrada_lon1.get(),
+              entrada_lat1.get(),
+              entrada_lon2.get(),
+              entrada_lat2.get(),
+              entrada_minerales_nuevo.get()
+          )).grid(row=9, column=1, columnspan=2, pady=10)
 
     bloque_eliminar = tk.LabelFrame(panel, text="Eliminar condado",
                                     bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
@@ -1544,34 +1599,18 @@ listar_condados(mapa,
     entrada_condado_borrar = tk.Entry(bloque_eliminar, bg=COLOR_ENTRADA, width=22, font=("Arial", 11))
     entrada_condado_borrar.grid(row=2, column=1, padx=8, pady=6)
 
-    aviso = tk.Label(bloque_eliminar,
-                     text="Esta acción elimina el condado completo.",
-                     bg=COLOR_PANEL_CLARO, fg=COLOR_ERROR,
-                     font=("Arial", 9, "bold"))
-    aviso.grid(row=3, column=0, columnspan=2, padx=8, pady=10)
 
-    def ejecutar_eliminar_condado():
-        resultado = eliminar_condado(mapa,
-                                     texto_normal(entrada_pais_borrar.get()),
-                                     texto_normal(entrada_estado_borrar.get()),
-                                     texto_normal(entrada_condado_borrar.get()))
 
-        if resultado:
-            messagebox.showinfo("Correcto", "Condado eliminado correctamente.")
-        else:
-            messagebox.showerror("Error", "No se pudo eliminar. Revise los datos.")
-
-        mostrar_resultado("Condados actuales",
-                          listar_condados(mapa,
-                                          texto_normal(entrada_pais_borrar.get()),
-                                          texto_normal(entrada_estado_borrar.get())))
-
-    tk.Button(bloque_eliminar, text="Eliminar",
-              bg=COLOR_ERROR, fg=COLOR_TEXTO,
-              activebackground=COLOR_ERROR,
-              font=("Arial", 10, "bold"),
-              width=15, height=2,
-              command=ejecutar_eliminar_condado).grid(row=4, column=0, columnspan=2, pady=10)
+    tk.Button(bloque_eliminar, text="Eliminar Condado",
+          bg=COLOR_ERROR, fg=COLOR_TEXTO,
+          activebackground=COLOR_ERROR,
+          font=("Arial", 10, "bold"),
+          width=15, height=2,
+          command=lambda: eliminar_condado_interfaz(
+              entrada_pais_borrar.get(),
+              entrada_estado_borrar.get(),
+              entrada_condado_borrar.get()
+          )).grid(row=4, column=1, columnspan=2, pady=10)
 
     panel.grid_columnconfigure(0, weight=2)
     panel.grid_columnconfigure(1, weight=1)
@@ -1580,6 +1619,64 @@ listar_condados(mapa,
 # ---------------------------------------------------------
 # PANTALLA: COORDENADAS
 # ---------------------------------------------------------
+def convertir_decimal_interfaz(coordenada_texto):
+    coord = leer_coordenada(coordenada_texto)
+
+    if coord == False:
+        messagebox.showerror("Error", "Use el formato grados,minutos,segundos.")
+        return
+
+    mostrar_resultado("Coordenada en decimal", coordenadas_a_decimal(coord))
+
+
+def buscar_coordenada_interfaz(longitud_texto, latitud_texto):
+    longitud = leer_coordenada(longitud_texto)
+    latitud = leer_coordenada(latitud_texto)
+
+    if longitud == False or latitud == False:
+        messagebox.showerror("Error", "Use el formato grados,minutos,segundos.")
+        return
+
+    resultado = buscar_por_coordenadas_interfaz(longitud, latitud)
+    mostrar_resultado("Condado encontrado", resultado)
+
+
+def calcular_area_interfaz(pais, estado, condado):
+    condado_encontrado = buscar_condado_completo(
+        texto_normal(pais),
+        texto_normal(estado),
+        texto_normal(condado)
+    )
+
+    if condado_encontrado == False:
+        messagebox.showerror("Error", "No se encontró el condado.")
+        return
+
+    mostrar_resultado("Área aproximada del condado", area_de_condado(condado_encontrado))
+
+
+def revisar_traslape_interfaz(pais1, estado1, condado1, pais2, estado2, condado2):
+    primer_condado = buscar_condado_completo(
+        texto_normal(pais1),
+        texto_normal(estado1),
+        texto_normal(condado1)
+    )
+
+    segundo_condado = buscar_condado_completo(
+        texto_normal(pais2),
+        texto_normal(estado2),
+        texto_normal(condado2)
+    )
+
+    if primer_condado == False or segundo_condado == False:
+        messagebox.showerror("Error", "No se encontró uno de los condados.")
+        return
+
+    mostrar_resultado("Resultado de traslape", hay_traslape(primer_condado, segundo_condado))
+
+
+def verificar_traslapes_interfaz():
+    mostrar_resultado("Traslapes encontrados", verificar_traslapes())
 
 def pantalla_coordenadas():
     limpiar_area_trabajo()
@@ -1589,18 +1686,12 @@ def pantalla_coordenadas():
                       font=("Arial", 22, "bold"))
     titulo.pack(anchor="w", padx=25, pady=(18, 5))
 
-    subtitulo = tk.Label(area_trabajo,
-                         text="Convierte coordenadas, busca condados, calcula áreas y revisa traslapes.",
-                         bg=COLOR_FONDO, fg=COLOR_TEXTO,
-                         font=("Arial", 11))
-    subtitulo.pack(anchor="w", padx=25, pady=(0, 12))
-
     panel = tk.Frame(area_trabajo, bg=COLOR_PANEL_CLARO)
     panel.pack(fill="x", padx=25, pady=8)
 
     bloque_decimal = tk.LabelFrame(panel, text="Convertir a decimal",
                                    bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                                   font=("Arial", 11, "bold"))
+                                   font=("Arial", 15, "bold"))
     bloque_decimal.grid(row=0, column=0, padx=12, pady=12, sticky="nsew")
 
     tk.Label(bloque_decimal, text="Coordenada:",
@@ -1613,25 +1704,19 @@ def pantalla_coordenadas():
              bg=COLOR_PANEL_CLARO, fg=COLOR_BOTON,
              font=("Arial", 9)).grid(row=1, column=0, columnspan=2)
 
-    def ejecutar_decimal():
-        coord = leer_coordenada(entrada_coord_decimal.get())
 
-        if coord == False:
-            messagebox.showerror("Error", "Use el formato grados,minutos,segundos.")
-            return
-
-        mostrar_resultado("Coordenada en decimal", coordenadas_a_decimal(coord))
-
-    tk.Button(bloque_decimal, text="Convertir",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 10, "bold"),
-              width=15, height=2,
-              command=ejecutar_decimal).grid(row=2, column=0, columnspan=2, pady=10)
+    tk.Button(bloque_decimal, text="Convertir a decimal",
+          bg=COLOR_BOTON, fg=COLOR_OSCURO,
+          activebackground=COLOR_BOTON_OSCURO,
+          font=("Arial", 10, "bold"),
+          width=20, height=2,
+          command=lambda: convertir_decimal_interfaz(
+              entrada_coord_decimal.get()
+          )).grid(row=2, column=1, pady=10)
 
     bloque_buscar = tk.LabelFrame(panel, text="Buscar condado por coordenadas",
                                   bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                                  font=("Arial", 11, "bold"))
+                                  font=("Arial", 15, "bold"))
     bloque_buscar.grid(row=0, column=1, padx=12, pady=12, sticky="nsew")
 
     tk.Label(bloque_buscar, text="Longitud:",
@@ -1646,27 +1731,20 @@ def pantalla_coordenadas():
     entrada_latitud_buscar = tk.Entry(bloque_buscar, bg=COLOR_ENTRADA, width=22, font=("Arial", 11))
     entrada_latitud_buscar.grid(row=1, column=1, padx=8, pady=6)
 
-    def ejecutar_buscar_coordenada():
-        longitud = leer_coordenada(entrada_longitud_buscar.get())
-        latitud = leer_coordenada(entrada_latitud_buscar.get())
 
-        if longitud == False or latitud == False:
-            messagebox.showerror("Error", "Use el formato grados,minutos,segundos.")
-            return
-
-        resultado = buscar_por_coordenadas_interfaz(longitud, latitud)
-        mostrar_resultado("Condado encontrado", resultado)
-
-    tk.Button(bloque_buscar, text="Buscar",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 10, "bold"),
-              width=15, height=2,
-              command=ejecutar_buscar_coordenada).grid(row=2, column=0, columnspan=2, pady=10)
+    tk.Button(bloque_buscar, text="Buscar Condado",
+          bg=COLOR_BOTON, fg=COLOR_OSCURO,
+          activebackground=COLOR_BOTON_OSCURO,
+          font=("Arial", 10, "bold"),
+          width=20, height=2,
+          command=lambda: buscar_coordenada_interfaz(
+              entrada_longitud_buscar.get(),
+              entrada_latitud_buscar.get()
+          )).grid(row=2, column=1, columnspan=2, pady=10)
 
     bloque_area = tk.LabelFrame(panel, text="Área de condado",
                                 bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                                font=("Arial", 11, "bold"))
+                                font=("Arial", 15, "bold"))
     bloque_area.grid(row=1, column=0, padx=12, pady=12, sticky="nsew")
 
     tk.Label(bloque_area, text="País:", bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO).grid(row=0, column=0, padx=8, pady=5, sticky="w")
@@ -1681,27 +1759,20 @@ def pantalla_coordenadas():
     entrada_condado_area = tk.Entry(bloque_area, bg=COLOR_ENTRADA, width=22, font=("Arial", 11))
     entrada_condado_area.grid(row=2, column=1, padx=8, pady=5)
 
-    def ejecutar_area():
-        condado = buscar_condado_completo(texto_normal(entrada_pais_area.get()),
-                                          texto_normal(entrada_estado_area.get()),
-                                          texto_normal(entrada_condado_area.get()))
-
-        if condado == False:
-            messagebox.showerror("Error", "No se encontró el condado.")
-            return
-
-        mostrar_resultado("Área aproximada del condado", area_de_condado(condado))
-
-    tk.Button(bloque_area, text="Calcular",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 10, "bold"),
-              width=15, height=2,
-              command=ejecutar_area).grid(row=3, column=0, columnspan=2, pady=10)
+    tk.Button(bloque_area, text="Calcular Área",
+          bg=COLOR_BOTON, fg=COLOR_OSCURO,
+          activebackground=COLOR_BOTON_OSCURO,
+          font=("Arial", 10, "bold"),
+          width=20, height=2,
+          command=lambda: calcular_area_interfaz(
+              entrada_pais_area.get(),
+              entrada_estado_area.get(),
+              entrada_condado_area.get()
+          )).grid(row=3, column=1, columnspan=2, pady=10)
 
     bloque_traslape = tk.LabelFrame(panel, text="Traslapes",
                                     bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                                    font=("Arial", 11, "bold"))
+                                    font=("Arial", 15, "bold"))
     bloque_traslape.grid(row=1, column=1, padx=12, pady=12, sticky="nsew")
 
     tk.Label(bloque_traslape, text="Condado A",
@@ -1736,34 +1807,27 @@ def pantalla_coordenadas():
     entrada_condado_t2 = tk.Entry(bloque_traslape, bg=COLOR_ENTRADA, width=16, font=("Arial", 10))
     entrada_condado_t2.grid(row=3, column=3, padx=5, pady=3)
 
-    def ejecutar_traslape():
-        condado1 = buscar_condado_completo(texto_normal(entrada_pais_t1.get()),
-                                           texto_normal(entrada_estado_t1.get()),
-                                           texto_normal(entrada_condado_t1.get()))
-
-        condado2 = buscar_condado_completo(texto_normal(entrada_pais_t2.get()),
-                                           texto_normal(entrada_estado_t2.get()),
-                                           texto_normal(entrada_condado_t2.get()))
-
-        if condado1 == False or condado2 == False:
-            messagebox.showerror("Error", "No se encontró uno de los condados.")
-            return
-
-        mostrar_resultado("Resultado de traslape", hay_traslape(condado1, condado2))
 
     tk.Button(bloque_traslape, text="Revisar",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 10, "bold"),
-              width=13, height=2,
-              command=ejecutar_traslape).grid(row=4, column=0, columnspan=2, pady=8)
+          bg=COLOR_BOTON, fg=COLOR_OSCURO,
+          activebackground=COLOR_BOTON_OSCURO,
+          font=("Arial", 10, "bold"),
+          width=13, height=2,
+          command=lambda: revisar_traslape_interfaz(
+              entrada_pais_t1.get(),
+              entrada_estado_t1.get(),
+              entrada_condado_t1.get(),
+              entrada_pais_t2.get(),
+              entrada_estado_t2.get(),
+              entrada_condado_t2.get()
+          )).grid(row=4, column=1, pady=8)
 
-    tk.Button(bloque_traslape, text="Ver todos",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 10, "bold"),
-              width=13, height=2,
-              command=lambda: mostrar_resultado("Traslapes encontrados", verificar_traslapes())).grid(row=4, column=2, columnspan=2, pady=8)
+    tk.Button(bloque_traslape, text="Ver todos los traslapes",
+          bg=COLOR_BOTON, fg=COLOR_OSCURO,
+          activebackground=COLOR_BOTON_OSCURO,
+          font=("Arial", 10, "bold"),
+          width=20, height=2,
+          command=verificar_traslapes_interfaz).grid(row=4, column=3, columnspan=2, pady=8)
 
     panel.grid_columnconfigure(0, weight=1)
     panel.grid_columnconfigure(1, weight=1)
@@ -1781,63 +1845,47 @@ def pantalla_analisis():
                       font=("Arial", 22, "bold"))
     titulo.pack(anchor="w", padx=25, pady=(18, 5))
 
-    subtitulo = tk.Label(area_trabajo,
-                         text="Resultados generales del mapa de minerales.",
-                         bg=COLOR_FONDO, fg=COLOR_TEXTO,
-                         font=("Arial", 11))
-    subtitulo.pack(anchor="w", padx=25, pady=(0, 12))
 
     panel = tk.Frame(area_trabajo, bg=COLOR_PANEL_CLARO)
     panel.pack(fill="x", padx=25, pady=8)
 
     bloque1 = tk.LabelFrame(panel, text="Condado con más minerales",
                             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                            font=("Arial", 11, "bold"))
+                            font=("Arial", 15, "bold"))
     bloque1.grid(row=0, column=0, padx=15, pady=15, sticky="nsew")
 
-    tk.Label(bloque1, text="Muestra el condado con mayor cantidad de minerales.",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             wraplength=190).pack(padx=10, pady=10)
-
-    tk.Button(bloque1, text="Consultar",
+    tk.Button(bloque1, text="Consultar Condado",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
               activebackground=COLOR_BOTON_OSCURO,
               font=("Arial", 10, "bold"),
-              width=15, height=2,
+              width=20, height=2,
               command=lambda: mostrar_resultado("Condado con más minerales",
                                                 condado_con_mas_minerales())).pack(pady=8)
 
     bloque2 = tk.LabelFrame(panel, text="Total minerales distintos",
                             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                            font=("Arial", 11, "bold"))
+                            font=("Arial", 15, "bold"))
     bloque2.grid(row=0, column=1, padx=15, pady=15, sticky="nsew")
 
-    tk.Label(bloque2, text="Cuenta todos los minerales diferentes del mapa.",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             wraplength=190).pack(padx=10, pady=10)
 
-    tk.Button(bloque2, text="Consultar",
+    tk.Button(bloque2, text="Consultar Minerales",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
               activebackground=COLOR_BOTON_OSCURO,
               font=("Arial", 10, "bold"),
-              width=15, height=2,
+              width=20, height=2,
               command=lambda: mostrar_resultado("Total de minerales distintos",
                                                 total_minerales_distintos())).pack(pady=8)
 
     bloque3 = tk.LabelFrame(panel, text="Minerales por país",
                             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-                            font=("Arial", 11, "bold"))
+                            font=("Arial", 15, "bold"))
     bloque3.grid(row=0, column=2, padx=15, pady=15, sticky="nsew")
 
-    tk.Label(bloque3, text="Muestra cuántos minerales distintos tiene cada país.",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             wraplength=190).pack(padx=10, pady=10)
-
-    tk.Button(bloque3, text="Consultar",
+    tk.Button(bloque3, text="Consultar Cantidades",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
               activebackground=COLOR_BOTON_OSCURO,
               font=("Arial", 10, "bold"),
-              width=15, height=2,
+              width=20, height=2,
               command=lambda: mostrar_resultado("Minerales distintos por país",
                                                 minerales_por_pais())).pack(pady=8)
 
@@ -1874,11 +1922,6 @@ def iniciar_interfaz_mantenimiento():
                           font=("Arial", 21, "bold"),
                           justify="center")
     encabezado.pack(pady=(25, 5))
-
-    descripcion = tk.Label(menu, text="Panel de mantenimiento",
-                           bg=COLOR_PANEL, fg=COLOR_TEXTO,
-                           font=("Arial", 10))
-    descripcion.pack(pady=(0, 22))
 
     tk.Button(menu, text="Navegación",
               bg=COLOR_BOTON, fg=COLOR_OSCURO,
@@ -1928,10 +1971,10 @@ def iniciar_interfaz_mantenimiento():
           command=volver_menu_desde_mantenimiento).pack(pady=(30, 10))
 
     area_trabajo = tk.Frame(zona_derecha, bg=COLOR_FONDO)
-    area_trabajo.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+    area_trabajo.pack(side=tk.TOP, fill=tk.X, anchor="n")
 
     panel_resultado = tk.Frame(zona_derecha, bg=COLOR_OSCURO)
-    panel_resultado.pack(side=tk.BOTTOM, fill=tk.X, padx=20, pady=(5, 18))
+    panel_resultado.pack(side=tk.TOP, fill=tk.X, padx=20, pady=(8, 18), anchor="n")
 
     etiqueta_resultado = tk.Label(panel_resultado, text="Resultado",
                                   bg=COLOR_OSCURO, fg=COLOR_BOTON,
