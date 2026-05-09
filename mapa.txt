@@ -1,1 +1,109 @@
-[['CostaRica', [['Alajuela', [['Grecia', [[[0, 0, 1], [10, 0, 0]], [[10, 0, 0], [0, 0, 1]]], ['Cuarzo', 'Granito', 'Basalto']], ['SM', [[[12, 52, 53], [-10, 2, 2]], [[19, 21, 34], [-7, 12, 26]]], ['Amatista', 'Pirita', 'Calcita', 'Oro']]]], ['Cartago', [['Central', [[[10, 40, 35], [-25, 32, 12]], [[12, 12, 13], [-32, 18, 6]]], ['Amatista', 'Calcita', 'Obsidiana', 'Mica', 'Granito']], ['Guarco', [[[26, 40, 35], [-18, 32, 12]], [[29, 12, 13], [-22, 18, 6]]], ['Topacio', 'Pirita', 'Esmeralda']]]]]], ['USA', [['Florida', [['Miami', [[[77, 0, 3], [50, 2, 0]], [[72, 1, 1], [89, 8, 44]]], ['Cuarzo', 'Calcita', 'Hematita']], ['Orlando', [[[-18, 4, 39], [86, 33, 32]], [[-22, 12, 3], [82, 16, 22]]], ['Calcita', 'Jade', 'Pirita', 'Granito']]]], ['Washington', [['DC', [[[-50, 0, 0], [50, 0, 0]], [[-60, 0, 0], [60, 0, 0]]], ['Esmeralda', 'Rubí', 'Zafiro']]]]]], ['Japan', [['Kanto', [['Tokyo', [[[35, 41, 22], [139, 41, 30]], [[35, 42, 0], [139, 42, 10]]], ['Obsidiana', 'Granito', 'Mica']], ['Yokohama', [[[35, 27, 50], [139, 38, 18]], [[35, 28, 30], [139, 39, 0]]], ['Granito', 'Topacio', 'Cuarzo', 'Calcita']]]], ['Kansai', [['Osaka', [[[34, 41, 38], [135, 30, 14]], [[34, 42, 20], [135, 31, 0]]], ['Topacio', 'Rubí', 'Esmeralda']], ['Kyoto', [[[35, 0, 0], [135, 45, 0]], [[35, 1, 0], [135, 46, 0]]], ['Hematita', 'Jade', 'Obsidiana']]]]]]]
+[
+    ['CostaRica', [
+        ['Alajuela', [
+            ['Grecia', [[[-80, 0, 0], [30, 0, 0]], [[-72, 0, 0], [38, 0, 0]]], ['Cuarzo', 'Granito', 'Basalto']],
+            ['SanCarlos', [[[-70, 0, 0], [30, 0, 0]], [[-62, 0, 0], [38, 0, 0]]], ['Amatista', 'Pirita', 'Calcita', 'Oro']],
+            ['Naranjo', [[[-60, 0, 0], [30, 0, 0]], [[-52, 0, 0], [38, 0, 0]]], ['Topacio', 'Mica', 'Cuarzo']]
+        ]],
+        ['Cartago', [
+            ['Central', [[[-80, 0, 0], [20, 0, 0]], [[-72, 0, 0], [28, 0, 0]]], ['Amatista', 'Calcita', 'Obsidiana', 'Mica']],
+            ['Guarco', [[[-70, 0, 0], [20, 0, 0]], [[-62, 0, 0], [28, 0, 0]]], ['Topacio', 'Pirita', 'Esmeralda']],
+            ['Paraiso', [[[-60, 0, 0], [20, 0, 0]], [[-52, 0, 0], [28, 0, 0]]], ['Jade', 'Granito', 'Basalto']]
+        ]],
+        ['Heredia', [
+            ['CentralHeredia', [[[-80, 0, 0], [10, 0, 0]], [[-72, 0, 0], [18, 0, 0]]], ['Oro', 'Cuarzo', 'Calcita']],
+            ['Sarapiqui', [[[-70, 0, 0], [10, 0, 0]], [[-62, 0, 0], [18, 0, 0]]], ['Granito', 'Pirita', 'Mica']],
+            ['Belen', [[[-60, 0, 0], [10, 0, 0]], [[-52, 0, 0], [18, 0, 0]]], ['Obsidiana', 'Topacio', 'Hematita']]
+        ]]
+    ]],
+
+    ['USA', [
+        ['Florida', [
+            ['Miami', [[[-40, 0, 0], [30, 0, 0]], [[-32, 0, 0], [38, 0, 0]]], ['Cuarzo', 'Calcita', 'Hematita']],
+            ['Orlando', [[[-30, 0, 0], [30, 0, 0]], [[-22, 0, 0], [38, 0, 0]]], ['Calcita', 'Jade', 'Pirita', 'Granito']],
+            ['Tampa', [[[-20, 0, 0], [30, 0, 0]], [[-12, 0, 0], [38, 0, 0]]], ['Mica', 'Topacio', 'Cuarzo']]
+        ]],
+        ['Washington', [
+            ['DC', [[[-40, 0, 0], [20, 0, 0]], [[-32, 0, 0], [28, 0, 0]]], ['Esmeralda', 'Rubi', 'Zafiro']],
+            ['Georgetown', [[[-30, 0, 0], [20, 0, 0]], [[-22, 0, 0], [28, 0, 0]]], ['Mica', 'Granito', 'Pirita']],
+            ['CapitolHill', [[[-20, 0, 0], [20, 0, 0]], [[-12, 0, 0], [28, 0, 0]]], ['Oro', 'Calcita', 'Basalto']]
+        ]],
+        ['California', [
+            ['LosAngeles', [[[-40, 0, 0], [10, 0, 0]], [[-32, 0, 0], [18, 0, 0]]], ['Oro', 'Topacio', 'Granito']],
+            ['SanFrancisco', [[[-30, 0, 0], [10, 0, 0]], [[-22, 0, 0], [18, 0, 0]]], ['Obsidiana', 'Cuarzo', 'Mica']],
+            ['SanDiego', [[[-20, 0, 0], [10, 0, 0]], [[-12, 0, 0], [18, 0, 0]]], ['Jade', 'Hematita', 'Pirita']]
+        ]]
+    ]],
+
+    ['Mexico', [
+        ['Jalisco', [
+            ['Guadalajara', [[[0, 0, 0], [30, 0, 0]], [[8, 0, 0], [38, 0, 0]]], ['Plata', 'Cuarzo', 'Obsidiana']],
+            ['Zapopan', [[[10, 0, 0], [30, 0, 0]], [[18, 0, 0], [38, 0, 0]]], ['Topacio', 'Calcita', 'Jade']],
+            ['Tlaquepaque', [[[20, 0, 0], [30, 0, 0]], [[28, 0, 0], [38, 0, 0]]], ['Granito', 'Pirita', 'Mica']]
+        ]],
+        ['CDMX', [
+            ['Centro', [[[0, 0, 0], [20, 0, 0]], [[8, 0, 0], [28, 0, 0]]], ['Oro', 'Pirita', 'Granito']],
+            ['Coyoacan', [[[10, 0, 0], [20, 0, 0]], [[18, 0, 0], [28, 0, 0]]], ['Amatista', 'Mica', 'Calcita']],
+            ['Tlalpan', [[[20, 0, 0], [20, 0, 0]], [[28, 0, 0], [28, 0, 0]]], ['Basalto', 'Obsidiana', 'Cuarzo']]
+        ]],
+        ['NuevoLeon', [
+            ['Monterrey', [[[0, 0, 0], [10, 0, 0]], [[8, 0, 0], [18, 0, 0]]], ['Hierro', 'Granito', 'Cuarzo']],
+            ['SanNicolas', [[[10, 0, 0], [10, 0, 0]], [[18, 0, 0], [18, 0, 0]]], ['Topacio', 'Esmeralda', 'Pirita']],
+            ['Guadalupe', [[[20, 0, 0], [10, 0, 0]], [[28, 0, 0], [18, 0, 0]]], ['Calcita', 'Jade', 'Mica']]
+        ]]
+    ]],
+
+    ['Japan', [
+        ['Kanto', [
+            ['Tokyo', [[[40, 0, 0], [30, 0, 0]], [[48, 0, 0], [38, 0, 0]]], ['Obsidiana', 'Granito', 'Mica']],
+            ['Yokohama', [[[50, 0, 0], [30, 0, 0]], [[58, 0, 0], [38, 0, 0]]], ['Granito', 'Topacio', 'Cuarzo', 'Calcita']],
+            ['Chiba', [[[60, 0, 0], [30, 0, 0]], [[68, 0, 0], [38, 0, 0]]], ['Pirita', 'Jade', 'Basalto']]
+        ]],
+        ['Kansai', [
+            ['Osaka', [[[40, 0, 0], [20, 0, 0]], [[48, 0, 0], [28, 0, 0]]], ['Topacio', 'Rubi', 'Esmeralda']],
+            ['Kyoto', [[[50, 0, 0], [20, 0, 0]], [[58, 0, 0], [28, 0, 0]]], ['Hematita', 'Jade', 'Obsidiana']],
+            ['Nara', [[[60, 0, 0], [20, 0, 0]], [[68, 0, 0], [28, 0, 0]]], ['Cuarzo', 'Mica', 'Granito']]
+        ]],
+        ['Tohoku', [
+            ['Sendai', [[[40, 0, 0], [10, 0, 0]], [[48, 0, 0], [18, 0, 0]]], ['Pirita', 'Calcita', 'Cuarzo']],
+            ['Aomori', [[[50, 0, 0], [10, 0, 0]], [[58, 0, 0], [18, 0, 0]]], ['Mica', 'Granito', 'Zafiro']],
+            ['Akita', [[[60, 0, 0], [10, 0, 0]], [[68, 0, 0], [18, 0, 0]]], ['Oro', 'Topacio', 'Basalto']]
+        ]]
+    ]],
+
+    ['Brazil', [
+        ['SaoPaulo', [
+            ['SaoPauloCity', [[[-80, 0, 0], [-10, 0, 0]], [[-72, 0, 0], [-2, 0, 0]]], ['Granito', 'Cuarzo', 'Hierro']],
+            ['Campinas', [[[-70, 0, 0], [-10, 0, 0]], [[-62, 0, 0], [-2, 0, 0]]], ['Amatista', 'Basalto', 'Mica']],
+            ['Santos', [[[-60, 0, 0], [-10, 0, 0]], [[-52, 0, 0], [-2, 0, 0]]], ['Calcita', 'Jade', 'Pirita']]
+        ]],
+        ['RioDeJaneiro', [
+            ['RioCentro', [[[-80, 0, 0], [-20, 0, 0]], [[-72, 0, 0], [-12, 0, 0]]], ['Topacio', 'Oro', 'Calcita']],
+            ['Niteroi', [[[-70, 0, 0], [-20, 0, 0]], [[-62, 0, 0], [-12, 0, 0]]], ['Pirita', 'Jade', 'Granito']],
+            ['Petropolis', [[[-60, 0, 0], [-20, 0, 0]], [[-52, 0, 0], [-12, 0, 0]]], ['Mica', 'Cuarzo', 'Esmeralda']]
+        ]],
+        ['Bahia', [
+            ['Salvador', [[[-80, 0, 0], [-30, 0, 0]], [[-72, 0, 0], [-22, 0, 0]]], ['Esmeralda', 'Cuarzo', 'Mica']],
+            ['FeiraDeSantana', [[[-70, 0, 0], [-30, 0, 0]], [[-62, 0, 0], [-22, 0, 0]]], ['Calcita', 'Granito', 'Obsidiana']],
+            ['Ilheus', [[[-60, 0, 0], [-30, 0, 0]], [[-52, 0, 0], [-22, 0, 0]]], ['Topacio', 'Hematita', 'Basalto']]
+        ]]
+    ]],
+
+    ['Spain', [
+        ['Madrid', [
+            ['MadridCentro', [[[-40, 0, 0], [-10, 0, 0]], [[-32, 0, 0], [-2, 0, 0]]], ['Granito', 'Calcita', 'Pirita']],
+            ['Alcala', [[[-30, 0, 0], [-10, 0, 0]], [[-22, 0, 0], [-2, 0, 0]]], ['Mica', 'Topacio', 'Cuarzo']],
+            ['Getafe', [[[-20, 0, 0], [-10, 0, 0]], [[-12, 0, 0], [-2, 0, 0]]], ['Oro', 'Jade', 'Basalto']]
+        ]],
+        ['Cataluna', [
+            ['Barcelona', [[[-40, 0, 0], [-20, 0, 0]], [[-32, 0, 0], [-12, 0, 0]]], ['Esmeralda', 'Granito', 'Obsidiana']],
+            ['Girona', [[[-30, 0, 0], [-20, 0, 0]], [[-22, 0, 0], [-12, 0, 0]]], ['Amatista', 'Calcita', 'Jade']],
+            ['Tarragona', [[[-20, 0, 0], [-20, 0, 0]], [[-12, 0, 0], [-12, 0, 0]]], ['Pirita', 'Cuarzo', 'Mica']]
+        ]],
+        ['Andalucia', [
+            ['Sevilla', [[[-40, 0, 0], [-30, 0, 0]], [[-32, 0, 0], [-22, 0, 0]]], ['Topacio', 'Pirita', 'Granito']],
+            ['Malaga', [[[-30, 0, 0], [-30, 0, 0]], [[-22, 0, 0], [-22, 0, 0]]], ['Cuarzo', 'Mica', 'Basalto']],
+            ['Cordoba', [[[-20, 0, 0], [-30, 0, 0]], [[-12, 0, 0], [-22, 0, 0]]], ['Hematita', 'Jade', 'Calcita']]
+        ]]
+    ]]
+]
