@@ -585,7 +585,7 @@ def obtener_limites_mapa_juego():
 
 
 def convertir_pixel_juego(longitud, latitud, lon_min, lon_max, lat_min, lat_max, ancho, alto):
-    margen = 30
+    margen = 5
 
     x = margen + ((longitud - lon_min) * (ancho - margen * 2) / (lon_max - lon_min))
     y = alto - margen - ((latitud - lat_min) * (alto - margen * 2) / (lat_max - lat_min))
@@ -613,7 +613,10 @@ def dibujar_mapa_juego():
                                  font=("Arial", 14, "bold"))
         return
 
-    lon_min, lon_max, lat_min, lat_max = obtener_limites_mapa_juego()
+    lon_min = -180
+    lon_max = 180
+    lat_min = -90
+    lat_max = 90
 
     if lon_max == lon_min:
         lon_max = lon_max + 1
@@ -675,7 +678,10 @@ def marcar_punto_juego(longitud, latitud):
     if alto <= 1:
         alto = 335
 
-    lon_min, lon_max, lat_min, lat_max = obtener_limites_mapa_juego()
+    lon_min = -180
+    lon_max = 180
+    lat_min = -90
+    lat_max = 90
 
     if lon_max == lon_min:
         lon_max = lon_max + 1
@@ -789,7 +795,15 @@ def buscar_partida_interfaz():
 
     longitud = leer_coordenada(entrada_longitud_juego.get())
     latitud = leer_coordenada(entrada_latitud_juego.get())
+    longitud_decimal = coordenadas_a_decimal(longitud)
+    latitud_decimal = coordenadas_a_decimal(latitud)
+    if longitud_decimal < -180 or longitud_decimal > 180:
+        messagebox.showerror("Error", "La longitud debe estar entre -180 y 180.")
+        return
 
+    if latitud_decimal < -90 or latitud_decimal > 90:
+        messagebox.showerror("Error", "La latitud debe estar entre -90 y 90.")
+        return
     if longitud == False or latitud == False:
         messagebox.showerror("Error", "Use el formato grados,minutos,segundos.")
         return
