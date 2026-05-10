@@ -1,8 +1,16 @@
+#INSTITUTO TECNOLÓGICO DE COSTA RICA
+#Proyecto Mineral Global Tracker
+#Fabián Cambronero Núñez 
+#Carné: 2026079420
+
+#Importamos las librerias necesarias del proyecto
 import tkinter as tk
 from tkinter import messagebox
+import math #Libreria para cálculos matematicos 
+import random
+from datetime import datetime
 
-import math
-
+#Declaramos los colores que vamos a utilizar 
 COLOR_FONDO = "#0B1D26"
 COLOR_PANEL = "#183A37"
 COLOR_PANEL_CLARO = "#244E4A"
@@ -13,6 +21,7 @@ COLOR_ENTRADA = "#F7F7F7"
 COLOR_OSCURO = "#102522"
 COLOR_ERROR = "#A63D40"
 
+#Variables globales para determinar lo que esta activado en la pantalla
 ventana = None
 menu_lateral = None
 contenido = None
@@ -20,7 +29,9 @@ contenido = None
 #--------------------
 #FUNCIONES REQUERIDAS
 #---------------------
-
+#Función para listar los paises de nuestro mapa
+#Entradas: El mapa, lista de listas
+#Salidas: lista de paises 
 def listar_paises(mapa):
     paises = []
     for pais in mapa:
@@ -29,7 +40,9 @@ def listar_paises(mapa):
 
     return paises
 
-
+#Función para listar los estados de nuestros paises en el mapa
+#Entradas: El mapa, y el pais para listar los estados
+#Salidas: lista de estados
 def listar_estados(mapa, pais):
     estados = []
 
@@ -46,6 +59,9 @@ def listar_estados(mapa, pais):
             return estados
     return estados
 
+#Función para listar los estados de nuestros paises en el mapa
+#Entradas: El mapa, y el pais para listar los estados
+#Salidas: lista de estados
 def listar_condados(mapa, pais, estado):
     condados = []
 
@@ -58,6 +74,9 @@ def listar_condados(mapa, pais, estado):
                     return condados
     return condados
 
+#Función para visualizar los minerales que pertencen a un condado
+#Entradas:mapa, el pais, el estado, y el condado
+#Salidas: Lista de minerales que hay en el condado
 def minerales_en_condado(mapa, pais, estado, condado):
     for pais_actual in mapa:
         if pais_actual[0] == pais:
@@ -68,6 +87,9 @@ def minerales_en_condado(mapa, pais, estado, condado):
                             return condado_actual[2]
     return []
 
+#Funcion para agregar un mineral a un condado
+#Entradas: El mapa, el pais, el estado, el condado y el nombre del mineral que deseamos agregar
+#Salidas: Booleana si se encontro el condado y se le pudo agregar el mineral
 def agregar_mineral_a_condado(mapa, pais, estado, condado, nombre_mineral):
     for pais_actual in mapa:
         if pais_actual[0] == pais:
@@ -77,12 +99,15 @@ def agregar_mineral_a_condado(mapa, pais, estado, condado, nombre_mineral):
                         if condado_actual[0] == condado:
                             if nombre_mineral not in condado_actual[2]:
                                 condado_actual[2].append(nombre_mineral)
-                                guardar_mapa()
+                                guardar_mapa() #Guardamos el archivo con el nuevo mineral
                                 return True
                             return False
 
     return False
 
+#Función para eliminar un mienral de un condado
+#Entradas: el mapa, el pais, el estado, el condado y el nombre del mineral a eliminar
+#Salidas: Booleano si se logro eliminar el mineral 
 def eliminar_mineral_de_condado(mapa, pais, estado, condado, nombre_mineral):
     for pais_actual in mapa:
         if pais_actual[0] == pais:
@@ -98,6 +123,9 @@ def eliminar_mineral_de_condado(mapa, pais, estado, condado, nombre_mineral):
 
     return False
 
+#Función para agregar un nuevo condado
+#Entradas: Mapa, pais, estado, nombre del condado, las coordenadas y los minerales que tiene
+#Salidas: Booleano si se logro agregar el condado
 def agregar_condado(mapa, pais, estado, nombre_condado, coordenadas, minerales):
     for pais_actual in mapa:
         if pais_actual[0] == pais:
@@ -114,6 +142,9 @@ def agregar_condado(mapa, pais, estado, nombre_condado, coordenadas, minerales):
 
     return False
 
+#Función para eliminar un condado
+#Entradas: Mapa, pais, estado, nombre del condado
+#Salidas: Booleano si se logro eliminar el condado
 def eliminar_condado(mapa, pais, estado, nombre_condado):
     for pais_actual in mapa:
         if pais_actual[0] == pais:
@@ -127,7 +158,9 @@ def eliminar_condado(mapa, pais, estado, nombre_condado):
 
     return False
 
-
+#Función para pasar de coordenadas en formato 0,0,0 a su valor decimal
+#Entradas: Coordenadas
+#Salidas: El decimal de esas coordenadas
 def coordenadas_a_decimal(coord):
     grados = coord[0]
     minutos = coord[1]
@@ -139,7 +172,9 @@ def coordenadas_a_decimal(coord):
         decimal = grados + minutos / 60 + segundos / 3600
     return decimal
 
-
+#Buscar un condado por su respectiva coordenada
+#Entradas: el mapa y las coordenadas de la longitud y latitud necesarias
+#Salidas: lista con la información donde se encontro el condado
 def buscar_condado_por_coordenadas(mapa, longitud, latitud):
     longitud_decimal = coordenadas_a_decimal(longitud)
     latitud_decimal = coordenadas_a_decimal(latitud)
@@ -173,6 +208,9 @@ def buscar_condado_por_coordenadas(mapa, longitud, latitud):
 
     return False
 
+#Función para obtener el area de un condado
+#Entradas: Lista de condado
+#Salidas: area del condado
 def area_de_condado(condado):
     coordenadas = condado[1]
 
@@ -191,13 +229,15 @@ def area_de_condado(condado):
     latitud_promedio = (latitud1 + latitud2) / 2
 
     alto = diferencia_latitud * 111
-    ancho = diferencia_longitud * 111 * math.cos(math.radians(latitud_promedio))
+    ancho = diferencia_longitud * 111 * math.cos(math.radians(latitud_promedio)) #Se utiliza fórmula
 
     area = alto * ancho
 
     return area
 
-
+#Función para verificar si hay traslapes
+#Entradas: Listas de condados
+#Salidas: Boolean si hay traslapes
 def hay_traslape(condado1, condado2):
     coordenadas1 = condado1[1]
     punto1_1 = coordenadas1[0]
@@ -241,6 +281,9 @@ def hay_traslape(condado1, condado2):
 
     return True
 
+#Función para verificar traslapes
+#Entradas: Variable global mapa
+#Salidas: lista de traslapes
 def verificar_traslapes():
     condados = []
     traslapes = []
@@ -267,7 +310,9 @@ def verificar_traslapes():
 
     return traslapes
 
-
+#Función para determinar el condado con más minerales
+#Entradas: Variable global mapa 
+#Salidas: lista de condado con mayor minerales
 def condado_con_mas_minerales():
     condado_mayor = []
     mayor_cantidad = 0
@@ -288,7 +333,9 @@ def condado_con_mas_minerales():
 
     return condado_mayor
 
-
+#Función para determinar el total de minerales
+#Entradas: Variable global de mapa
+#Salidas: el len de ua lista de materiales
 def total_minerales_distintos():
     minerales_distintos = []
 
@@ -302,7 +349,9 @@ def total_minerales_distintos():
     return len(minerales_distintos)
 
 
-
+#Determinar la cantidad de minerales por cada pais
+#Entradas: Variable general de mapa 
+#Salidas: lista de paises y minerales 
 def minerales_por_pais():
     resultado = []
 
@@ -321,9 +370,9 @@ def minerales_por_pais():
         ])
 
     return resultado
+
 # ---------------------------------------------------------
 # ARCHIVO DEL MAPA
-# El mapa ahora se carga desde mapa.txt
 # ---------------------------------------------------------
 
 FILE_PATH_MAPA = 'mapa.txt'
@@ -362,12 +411,9 @@ def recargar_mapa_archivo():
     messagebox.showinfo("Mapa cargado", "El mapa fue cargado desde mapa.txt")
 
 
-# ---------------------------------------------------------
-# LÓGICA DEL JUEGO - PLAYERS
-# ---------------------------------------------------------
-
-import random
-from datetime import datetime
+# ----------
+# PLAYERS
+# ----------
 
 FILE_PATH_PLAYERS = "players.txt"
 players = []
@@ -377,11 +423,11 @@ intentos_restantes = 0
 ubicacion_actual = []
 minerales_actuales = []
 
-
+#Guardar players en el documento
 def guardar_players():
     write_file(FILE_PATH_PLAYERS, "w", str(players))
 
-
+#Cargar layers desde el documento
 def cargar_players():
     try:
         global players
@@ -394,14 +440,18 @@ def cargar_players():
     except:
         players = []
 
-
+#Función para buscar un player
+#Entradas: Nombre del jugador
+#Salida: La lista del jugador o una lista vacía
 def buscar_player(nombre):
     for player in players:
         if player[0] == nombre:
             return player
     return []
 
-
+#Función para crear un jugador
+#Entradas: Nombre del jugador
+#Salidas: Booleano de que se creó el jugador
 def crear_player(nombre):
     global players
 
@@ -417,7 +467,9 @@ def crear_player(nombre):
 
     return True
 
-
+#Función para obtener las capturas del jugador
+#Entradas: Nombre del jugador
+#Salidas: Lista de las capturas
 def obtener_capturas_player(nombre):
     player = buscar_player(nombre)
 
@@ -426,7 +478,9 @@ def obtener_capturas_player(nombre):
 
     return []
 
-
+#Función para obtener los minerales del jugador
+#Entradas: Nombre del jugador
+#Salidas: Lista de los minerales
 def obtener_minerales_capturados(nombre):
     capturas = obtener_capturas_player(nombre)
     minerales = []
@@ -439,7 +493,9 @@ def obtener_minerales_capturados(nombre):
 
     return minerales
 
-
+#Función para verificar si ya existe el mineral
+#Entradas: Nombre del juador y mineral 
+#Salida: Booleano 
 def mineral_ya_capturado(nombre, mineral):
     minerales = obtener_minerales_capturados(nombre)
 
@@ -448,7 +504,9 @@ def mineral_ya_capturado(nombre, mineral):
 
     return False
 
-
+#Función para registar la captura de un mineral
+#Entradas: nombre del jugador, mineral que capturo, pais donde lo obtuvo, estado, y condado
+#Salidas: Boolean cuando capturo
 def registrar_captura(nombre, mineral, pais, estado, condado):
     player = buscar_player(nombre)
 
@@ -458,7 +516,7 @@ def registrar_captura(nombre, mineral, pais, estado, condado):
     if mineral_ya_capturado(nombre, mineral):
         return False
 
-    fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S") #Utilizamos la libreria para registrar la fecha de la captura 
 
     captura = [mineral, pais, estado, condado, fecha]
 
@@ -467,7 +525,9 @@ def registrar_captura(nombre, mineral, pais, estado, condado):
 
     return True
 
-
+#Iniciar la partida
+#Entradas nombre del juagdor
+#Salidas Booelano de que inicia
 def iniciar_partida(nombre):
     global jugador_actual
     global intentos_restantes
@@ -480,13 +540,15 @@ def iniciar_partida(nombre):
     crear_player(nombre)
 
     jugador_actual = nombre
-    intentos_restantes = random.randint(5, 10)
+    intentos_restantes = random.randint(5, 10) #Asiganción de los intentos 
     ubicacion_actual = []
     minerales_actuales = []
 
     return True
 
-
+#Función para intentar capturar en una coordenada
+#Entradas: coordenadas
+#Salidas: string 
 def intentar_coordenada(longitud, latitud):
     global intentos_restantes
     global ubicacion_actual
@@ -523,7 +585,9 @@ def intentar_coordenada(longitud, latitud):
 
     return "ENCONTRADO"
 
-
+#Función para capturar un mineral 
+#Entrada: mineral a capturar
+#Salida: lista con el registro de la captura 
 def capturar_mineral(mineral):
     if jugador_actual == "":
         return False
@@ -542,29 +606,31 @@ def capturar_mineral(mineral):
 
     return resultado
 
-# ---------------------------------------------------------
-# INTERFAZ VISUAL DEL JUEGO OFICIAL
-# Pegar después de la lógica del juego y antes del llamado final
-# ---------------------------------------------------------
+# -----------------
+# INTERFAZ VISUAL
+# -----------------
 
+#Procedimiento para limpiar el área del juego 
 def limpiar_juego():
     for widget in area_juego.winfo_children():
         widget.destroy()
         
 
-
+#Es la caja de infromación del juego
+#Entradas: El texto para mostrar 
 def mostrar_texto_juego(texto):
     texto_juego.config(state="normal")
     texto_juego.delete("1.0", tk.END)
     texto_juego.insert(tk.END, texto)
     texto_juego.config(state="disabled")
 
-
+#Actualizar la información actual del juego
 def actualizar_info_juego():
     label_jugador_juego.config(text="Jugador: " + jugador_actual)
     label_intentos_juego.config(text="Intentos: " + str(intentos_restantes))
 
-
+#Obtener los limites de juego
+#Función que esta en indecisión si el mapa lo dejaremos en escala mundial o en la escala de los paises que hay disponibles ******
 def obtener_limites_mapa_juego():
     longitudes = []
     latitudes = []
@@ -583,7 +649,9 @@ def obtener_limites_mapa_juego():
 
     return min(longitudes), max(longitudes), min(latitudes), max(latitudes)
 
-
+# Convierte una coordenada geografica a una posicion en pixeles dentro del Canvas.
+# Entradas: longitud, latitud, limites del mapa, ancho y alto del Canvas.
+# Salidas: retorna dos valores x, y que indican donde dibujar el punto o condado.
 def convertir_pixel_juego(longitud, latitud, lon_min, lon_max, lat_min, lat_max, ancho, alto):
     margen = 5
 
@@ -592,7 +660,7 @@ def convertir_pixel_juego(longitud, latitud, lon_min, lon_max, lat_min, lat_max,
 
     return x, y
 
-
+#Procedimiento para dibujar el mapa del juego
 def dibujar_mapa_juego():
     canvas_juego.delete("all")
     canvas_juego.update_idletasks()
@@ -607,10 +675,7 @@ def dibujar_mapa_juego():
         alto = 335
 
     if mapa == []:
-        canvas_juego.create_text(ancho / 2, alto / 2,
-                                 text="Mapa vacío",
-                                 fill="white",
-                                 font=("Arial", 14, "bold"))
+        canvas_juego.create_text(ancho / 2, alto / 2, text="Mapa vacío", fill="white", font=("Arial", 14, "bold"))
         return
 
     lon_min = -180
@@ -651,20 +716,15 @@ def dibujar_mapa_juego():
                 color = colores[contador % len(colores)]
                 contador = contador + 1
 
-                canvas_juego.create_rectangle(x_menor, y_menor, x_mayor, y_mayor,
-                                               fill=color,
-                                               outline="white",
-                                               width=1)
+                canvas_juego.create_rectangle(x_menor, y_menor, x_mayor, y_mayor,fill=color,outline="white",width=1)
 
                 centro_x = (x_menor + x_mayor) / 2
                 centro_y = (y_menor + y_mayor) / 2
 
-                canvas_juego.create_text(centro_x, centro_y,
-                                         text=condado[0],
-                                         fill="black",
-                                         font=("Arial", 8, "bold"))
+                canvas_juego.create_text(centro_x, centro_y,text=condado[0],fill="black",font=("Arial", 8, "bold"))
 
-
+#Función para marcar el punto despues de un intento 
+#Entradas: Coordenadas
 def marcar_punto_juego(longitud, latitud):
     canvas_juego.delete("punto")
     canvas_juego.update_idletasks()
@@ -694,16 +754,14 @@ def marcar_punto_juego(longitud, latitud):
 
     x, y = convertir_pixel_juego(lon_decimal, lat_decimal, lon_min, lon_max, lat_min, lat_max, ancho, alto)
 
-    canvas_juego.create_oval(x - 7, y - 7, x + 7, y + 7,
-                             fill=COLOR_ERROR,
-                             outline="white",
-                             width=2,
-                             tags="punto")
-    
+    canvas_juego.create_oval(x - 7, y - 7, x + 7, y + 7,fill=COLOR_ERROR,outline="white",width=2,tags="punto")
+
+#Botones del costado en el menú
 def mostrar_botones_juego_iniciado():
     boton_partida_juego.pack(pady=7)
     boton_historial_juego.pack(pady=7)
 
+#Limpiar la sesión del juego
 def limpiar_sesion_juego():
     global jugador_actual
     global intentos_restantes
@@ -714,6 +772,8 @@ def limpiar_sesion_juego():
     intentos_restantes = 0
     ubicacion_actual = []
     minerales_actuales = []
+
+#Comenzar un juego
 def comenzar_juego_inicio():
     global entrada_nombre_inicio
 
@@ -738,6 +798,8 @@ def comenzar_juego_inicio():
         pantalla_partida()
     else:
         messagebox.showerror("Error", "No se pudo iniciar la partida.")
+
+#Pantalla inicio del juego 
 def pantalla_inicio_juego():
     global entrada_nombre_inicio
 
@@ -745,15 +807,10 @@ def pantalla_inicio_juego():
 
     panel_resultado.pack_forget()
 
-    titulo = tk.Label(area_juego, text="Mineral Hunter",
-                      bg=COLOR_FONDO, fg=COLOR_BOTON,
-                      font=("Arial", 32, "bold"))
+    titulo = tk.Label(area_juego, text="Mineral Hunter",bg=COLOR_FONDO, fg=COLOR_BOTON,font=("Arial", 32, "bold"))
     titulo.pack(pady=(45, 8))
 
-    subtitulo = tk.Label(area_juego,
-                         text="Ingresa tu cuenta para comenzar la exploración.",
-                         bg=COLOR_FONDO, fg=COLOR_TEXTO,
-                         font=("Arial", 13))
+    subtitulo = tk.Label(area_juego,text="Ingresa tu cuenta para comenzar la exploración.",bg=COLOR_FONDO, fg=COLOR_TEXTO,font=("Arial", 13))
     subtitulo.pack(pady=(0, 25))
 
     panel = tk.Frame(area_juego, bg=COLOR_PANEL_CLARO, width=560, height=240)
@@ -763,33 +820,19 @@ def pantalla_inicio_juego():
     contenido = tk.Frame(panel, bg=COLOR_PANEL_CLARO)
     contenido.place(relx=0.5, rely=0.5, anchor="center")
 
-    tk.Label(contenido, text="Acceso del jugador",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 16, "bold")).grid(row=0, column=0, columnspan=2, pady=(0, 18))
+    tk.Label(contenido, text="Acceso del jugador",bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,font=("Arial", 16, "bold")).grid(row=0, column=0, columnspan=2, pady=(0, 18))
 
-    tk.Label(contenido, text="Nombre:",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 12, "bold")).grid(row=1, column=0, padx=(0, 12), pady=8, sticky="e")
+    tk.Label(contenido, text="Nombre:",bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,font=("Arial", 12, "bold")).grid(row=1, column=0, padx=(0, 12), pady=8, sticky="e")
 
-    entrada_nombre_inicio = tk.Entry(contenido,
-                                     bg=COLOR_ENTRADA,
-                                     width=24,
-                                     font=("Arial", 13),
-                                     justify="center")
+    entrada_nombre_inicio = tk.Entry(contenido,bg=COLOR_ENTRADA,width=24,font=("Arial", 13),justify="center")
     entrada_nombre_inicio.grid(row=1, column=1, pady=8, ipady=4)
     entrada_nombre_inicio.focus()
 
-    tk.Label(contenido,
-             text="Si la cuenta no existe, se creará una nueva.",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_BOTON,
-             font=("Arial", 10, "bold")).grid(row=2, column=0, columnspan=2, pady=(14, 18))
+    tk.Label(contenido,text="Si la cuenta no existe, se creará una nueva.", bg=COLOR_PANEL_CLARO, fg=COLOR_BOTON, font=("Arial", 10, "bold")).grid(row=2, column=0, columnspan=2, pady=(14, 18))
 
-    tk.Button(contenido, text="Iniciar partida",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 12, "bold"),
-              width=18, height=2,
-              command=comenzar_juego_inicio).grid(row=3, column=0, columnspan=2, pady=(0, 5))
+    tk.Button(contenido, text="Iniciar partida",bg=COLOR_BOTON, fg=COLOR_OSCURO,activebackground=COLOR_BOTON_OSCURO,font=("Arial", 12, "bold"),width=18, height=2,command=comenzar_juego_inicio).grid(row=3, column=0, columnspan=2, pady=(0, 5))
+
+#Buscar minerales por intento
 def buscar_partida_interfaz():
     lista_minerales_juego.delete(0, tk.END)
 
@@ -837,7 +880,7 @@ def buscar_partida_interfaz():
         for mineral in minerales_actuales:
             lista_minerales_juego.insert(tk.END, mineral)
 
-
+#Capturar el mineral que necesitamos
 def capturar_partida_interfaz():
     seleccion = lista_minerales_juego.curselection()
 
@@ -860,6 +903,7 @@ def capturar_partida_interfaz():
     else:
         messagebox.showerror("Error", "No se pudo capturar el mineral.")
 
+#Pantalla de la partida
 def pantalla_partida():
     global label_jugador_juego
     global label_intentos_juego
@@ -879,21 +923,15 @@ def pantalla_partida():
     encabezado = tk.Frame(area_juego, bg=COLOR_FONDO)
     encabezado.pack(fill="x", padx=25, pady=(15, 5))
 
-    tk.Label(encabezado, text="Partida actual",
-             bg=COLOR_FONDO, fg=COLOR_BOTON,
-             font=("Arial", 23, "bold")).pack(side=tk.LEFT)
+    tk.Label(encabezado, text="Partida actual",bg=COLOR_FONDO, fg=COLOR_BOTON, font=("Arial", 23, "bold")).pack(side=tk.LEFT)
 
     datos = tk.Frame(encabezado, bg=COLOR_FONDO)
     datos.pack(side=tk.RIGHT)
 
-    label_jugador_juego = tk.Label(datos, text="Jugador: ",
-                                   bg=COLOR_FONDO, fg=COLOR_TEXTO,
-                                   font=("Arial", 11, "bold"))
+    label_jugador_juego = tk.Label(datos, text="Jugador: ", bg=COLOR_FONDO, fg=COLOR_TEXTO, font=("Arial", 11, "bold"))
     label_jugador_juego.pack(anchor="e")
 
-    label_intentos_juego = tk.Label(datos, text="Intentos: ",
-                                    bg=COLOR_FONDO, fg=COLOR_TEXTO,
-                                    font=("Arial", 11, "bold"))
+    label_intentos_juego = tk.Label(datos, text="Intentos: ", bg=COLOR_FONDO, fg=COLOR_TEXTO, font=("Arial", 11, "bold"))
     label_intentos_juego.pack(anchor="e")
 
     actualizar_info_juego()
@@ -901,15 +939,9 @@ def pantalla_partida():
     panel_mapa = tk.Frame(area_juego, bg=COLOR_PANEL_CLARO)
     panel_mapa.pack(fill="x", padx=25, pady=(10, 8))
 
-    tk.Label(panel_mapa, text="Mapa de exploración",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 15, "bold")).pack(pady=(10, 6))
+    tk.Label(panel_mapa, text="Mapa de exploración",bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,font=("Arial", 15, "bold")).pack(pady=(10, 6))
 
-    canvas_juego = tk.Canvas(panel_mapa,
-                             width=820,
-                             height=335,
-                             bg="white",
-                             highlightthickness=0)
+    canvas_juego = tk.Canvas(panel_mapa,width=820,height=335,bg="white",highlightthickness=0)
     canvas_juego.pack(padx=15, pady=(0, 15))
 
     dibujar_mapa_juego()
@@ -920,67 +952,36 @@ def pantalla_partida():
     bloque_busqueda = tk.Frame(panel_control, bg=COLOR_PANEL_CLARO)
     bloque_busqueda.grid(row=0, column=0, padx=15, pady=12, sticky="w")
 
-    tk.Label(bloque_busqueda, text="Buscar coordenada",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 13, "bold")).grid(row=0, column=0, columnspan=4, pady=(0, 8))
+    tk.Label(bloque_busqueda, text="Buscar coordenada", bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO, font=("Arial", 13, "bold")).grid(row=0, column=0, columnspan=4, pady=(0, 8))
 
-    tk.Label(bloque_busqueda, text="Longitud:",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 10)).grid(row=1, column=0, padx=6, pady=5, sticky="e")
+    tk.Label(bloque_busqueda, text="Longitud:", bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO, font=("Arial", 10)).grid(row=1, column=0, padx=6, pady=5, sticky="e")
 
-    entrada_longitud_juego = tk.Entry(bloque_busqueda,
-                                      bg=COLOR_ENTRADA,
-                                      width=18,
-                                      font=("Arial", 10))
+    entrada_longitud_juego = tk.Entry(bloque_busqueda, bg=COLOR_ENTRADA, width=18, font=("Arial", 10))
     entrada_longitud_juego.grid(row=1, column=1, padx=6, pady=5)
 
-    tk.Label(bloque_busqueda, text="Latitud:",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 10)).grid(row=1, column=2, padx=6, pady=5, sticky="e")
+    tk.Label(bloque_busqueda, text="Latitud:", bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO, font=("Arial", 10)).grid(row=1, column=2, padx=6, pady=5, sticky="e")
 
-    entrada_latitud_juego = tk.Entry(bloque_busqueda,
-                                     bg=COLOR_ENTRADA,
-                                     width=18,
-                                     font=("Arial", 10))
+    entrada_latitud_juego = tk.Entry(bloque_busqueda,bg=COLOR_ENTRADA, width=18, font=("Arial", 10))
     entrada_latitud_juego.grid(row=1, column=3, padx=6, pady=5)
 
-    tk.Label(bloque_busqueda, text="Formato: grados,minutos,segundos",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_BOTON,
-             font=("Arial", 9, "bold")).grid(row=2, column=0, columnspan=4, pady=(2, 8))
+    tk.Label(bloque_busqueda, text="Formato: grados,minutos,segundos", bg=COLOR_PANEL_CLARO, fg=COLOR_BOTON, font=("Arial", 9, "bold")).grid(row=2, column=0, columnspan=4, pady=(2, 8))
 
-    tk.Button(bloque_busqueda, text="Buscar",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 10, "bold"),
-              width=14, height=2,
-              command=buscar_partida_interfaz).grid(row=3, column=1, padx=8, pady=(0, 5))
+    tk.Button(bloque_busqueda, text="Buscar", bg=COLOR_BOTON, fg=COLOR_OSCURO, activebackground=COLOR_BOTON_OSCURO, font=("Arial", 10, "bold"), width=14, height=2, command=buscar_partida_interfaz).grid(row=3, column=1, padx=8, pady=(0, 5))
 
-    tk.Button(bloque_busqueda, text="Capturar",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 10, "bold"),
-              width=14, height=2,
-              command=capturar_partida_interfaz).grid(row=3, column=2, padx=8, pady=(0, 5))
+    tk.Button(bloque_busqueda, text="Capturar", bg=COLOR_BOTON, fg=COLOR_OSCURO, activebackground=COLOR_BOTON_OSCURO, font=("Arial", 10, "bold"), width=14, height=2, command=capturar_partida_interfaz).grid(row=3, column=2, padx=8, pady=(0, 5))
 
     bloque_minerales = tk.Frame(panel_control, bg=COLOR_PANEL_CLARO)
     bloque_minerales.grid(row=0, column=1, padx=25, pady=12, sticky="e")
 
-    tk.Label(bloque_minerales, text="Minerales disponibles",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 13, "bold")).pack(pady=(0, 8))
+    tk.Label(bloque_minerales, text="Minerales disponibles", bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO, font=("Arial", 13, "bold")).pack(pady=(0, 8))
 
-    lista_minerales_juego = tk.Listbox(bloque_minerales,
-                                       width=30,
-                                       height=5,
-                                       bg=COLOR_ENTRADA,
-                                       fg="black",
-                                       font=("Arial", 10))
+    lista_minerales_juego = tk.Listbox(bloque_minerales, width=30, height=5, bg=COLOR_ENTRADA, fg="black", font=("Arial", 10))
     lista_minerales_juego.pack()
 
     panel_control.grid_columnconfigure(0, weight=1)
     panel_control.grid_columnconfigure(1, weight=1)
 
-
+#Pantalla historial del juego
 def pantalla_historial_juego():
     if jugador_actual == "":
         pantalla_inicio_juego()
@@ -988,24 +989,20 @@ def pantalla_historial_juego():
     limpiar_juego()
     panel_resultado.pack(side=tk.BOTTOM, fill=tk.X, padx=20, pady=(5, 18))
 
-    titulo = tk.Label(area_juego, text="Historial de capturas",
-                      bg=COLOR_FONDO, fg=COLOR_BOTON,
-                      font=("Arial", 22, "bold"))
+    titulo = tk.Label(area_juego, text="Historial de capturas", bg=COLOR_FONDO, fg=COLOR_BOTON, font=("Arial", 22, "bold"))
     titulo.pack(anchor="w", padx=25, pady=(25, 8))
 
     panel = tk.Frame(area_juego, bg=COLOR_PANEL_CLARO)
     panel.pack(padx=25, pady=15)
 
-    tk.Label(panel, text="Nombre del jugador:",
-             bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO,
-             font=("Arial", 15, "bold")).grid(row=0, column=0, padx=10, pady=12)
+    tk.Label(panel, text="Nombre del jugador:", bg=COLOR_PANEL_CLARO, fg=COLOR_TEXTO, font=("Arial", 15, "bold")).grid(row=0, column=0, padx=10, pady=12)
 
     entrada_nombre = tk.Entry(panel, bg=COLOR_ENTRADA, width=24, font=("Arial", 11))
     entrada_nombre.grid(row=0, column=1, padx=10, pady=12)
 
     if jugador_actual != "":
         entrada_nombre.insert(0, jugador_actual)
-
+    #Consultar el historial del jugador
     def consultar_historial():
         nombre = entrada_nombre.get().strip()
 
@@ -1031,14 +1028,9 @@ def pantalla_historial_juego():
 
         mostrar_texto_juego(texto)
 
-    tk.Button(panel, text="Consultar",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 11, "bold"),
-              width=16, height=2,
-              command=consultar_historial).grid(row=1, column=0, columnspan=2, pady=(0, 12))
+    tk.Button(panel, text="Consultar", bg=COLOR_BOTON, fg=COLOR_OSCURO, activebackground=COLOR_BOTON_OSCURO, font=("Arial", 11, "bold"), width=16, height=2, command=consultar_historial).grid(row=1, column=0, columnspan=2, pady=(0, 12))
 
-
+#Iniciar la interfaz del juego
 def iniciar_interfaz_juego():
     global ventana_juego
     global area_juego
@@ -1059,17 +1051,9 @@ def iniciar_interfaz_juego():
     zona_derecha = tk.Frame(ventana_juego, bg=COLOR_FONDO)
     zona_derecha.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-    tk.Label(menu, text="MINERAL\nHUNTER",
-             bg=COLOR_PANEL, fg=COLOR_BOTON,
-             font=("Arial", 21, "bold"),
-             justify="center").pack(pady=(25, 5))
+    tk.Label(menu, text="MINERAL\nHUNTER", bg=COLOR_PANEL, fg=COLOR_BOTON, font=("Arial", 21, "bold"), justify="center").pack(pady=(25, 5))
 
-    tk.Button(menu, text="Inicio",
-              bg=COLOR_BOTON, fg=COLOR_OSCURO,
-              activebackground=COLOR_BOTON_OSCURO,
-              font=("Arial", 11, "bold"),
-              width=17, height=2,
-              command=pantalla_inicio_juego).pack(pady=7)
+    tk.Button(menu, text="Inicio", bg=COLOR_BOTON, fg=COLOR_OSCURO, activebackground=COLOR_BOTON_OSCURO, font=("Arial", 11, "bold"), width=17, height=2, command=pantalla_inicio_juego).pack(pady=7)
 
     boton_partida_juego = tk.Button(menu, text="Partida",
                                     bg=COLOR_BOTON, fg=COLOR_OSCURO,
@@ -1078,19 +1062,9 @@ def iniciar_interfaz_juego():
                                     width=17, height=2,
                                     command=pantalla_partida)
 
-    boton_historial_juego = tk.Button(menu, text="Historial",
-                                      bg=COLOR_BOTON, fg=COLOR_OSCURO,
-                                      activebackground=COLOR_BOTON_OSCURO,
-                                      font=("Arial", 11, "bold"),
-                                      width=17, height=2,
-                                      command=pantalla_historial_juego)
+    boton_historial_juego = tk.Button(menu, text="Historial", bg=COLOR_BOTON, fg=COLOR_OSCURO, activebackground=COLOR_BOTON_OSCURO, font=("Arial", 11, "bold"), width=17, height=2, command=pantalla_historial_juego)
 
-    tk.Button(menu, text="Salir",
-              bg=COLOR_ERROR, fg=COLOR_TEXTO,
-              activebackground=COLOR_ERROR,
-              font=("Arial", 11, "bold"),
-              width=17, height=2,
-              command=volver_menu_desde_juego).pack(pady=(30, 10))
+    tk.Button(menu, text="Salir",bg=COLOR_ERROR, fg=COLOR_TEXTO, activebackground=COLOR_ERROR, font=("Arial", 11, "bold"), width=17, height=2, command=volver_menu_desde_juego).pack(pady=(30, 10))
 
     area_juego = tk.Frame(zona_derecha, bg=COLOR_FONDO)
     area_juego.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -1098,9 +1072,7 @@ def iniciar_interfaz_juego():
     panel_resultado = tk.Frame(zona_derecha, bg=COLOR_OSCURO)
     panel_resultado.pack(side=tk.BOTTOM, fill=tk.X, padx=20, pady=(5, 18))
 
-    tk.Label(panel_resultado, text="Información",
-             bg=COLOR_OSCURO, fg=COLOR_BOTON,
-             font=("Arial", 13, "bold")).pack(anchor="w", padx=12, pady=(8, 0))
+    tk.Label(panel_resultado, text="Información", bg=COLOR_OSCURO, fg=COLOR_BOTON, font=("Arial", 13, "bold")).pack(anchor="w", padx=12, pady=(8, 0))
 
     frame_texto = tk.Frame(panel_resultado, bg=COLOR_OSCURO)
     frame_texto.pack(fill=tk.X, padx=12, pady=10)
@@ -1108,14 +1080,7 @@ def iniciar_interfaz_juego():
     scroll = tk.Scrollbar(frame_texto)
     scroll.pack(side=tk.RIGHT, fill=tk.Y)
 
-    texto_juego = tk.Text(frame_texto,
-                          height=9,
-                          bg=COLOR_ENTRADA,
-                          fg="black",
-                          font=("Consolas", 10),
-                          relief="flat",
-                          yscrollcommand=scroll.set,
-                          wrap="none")
+    texto_juego = tk.Text(frame_texto, height=9, bg=COLOR_ENTRADA, fg="black", font=("Consolas", 10), relief="flat", yscrollcommand=scroll.set, wrap="none")
     texto_juego.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
     scroll.config(command=texto_juego.yview)
@@ -1125,16 +1090,16 @@ def iniciar_interfaz_juego():
 
     ventana_juego.mainloop()
 
-
+#Volver al menú principal
 def volver_menu_desde_juego():
     limpiar_sesion_juego()
     ventana_juego.destroy()
     iniciar_menu_principal()
 
 
-# ---------------------------------------------------------
+# -----------------
 # MENÚ PRINCIPAL
-# ---------------------------------------------------------
+# -----------------
 
 def abrir_juego():
         ventana_menu.destroy()
