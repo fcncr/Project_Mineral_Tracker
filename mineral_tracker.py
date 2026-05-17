@@ -91,6 +91,8 @@ def minerales_en_condado(mapa, pais, estado, condado):
 #Entradas: El mapa, el pais, el estado, el condado y el nombre del mineral que deseamos agregar
 #Salidas: Booleana si se encontro el condado y se le pudo agregar el mineral
 def agregar_mineral_a_condado(mapa, pais, estado, condado, nombre_mineral):
+    if nombre_mineral == "":
+        return False
     for pais_actual in mapa:
         if pais_actual[0] == pais:
             for estado_actual in pais_actual[1]:
@@ -127,6 +129,10 @@ def eliminar_mineral_de_condado(mapa, pais, estado, condado, nombre_mineral):
 #Entradas: Mapa, pais, estado, nombre del condado, las coordenadas y los minerales que tiene
 #Salidas: Booleano si se logro agregar el condado
 def agregar_condado(mapa, pais, estado, nombre_condado, coordenadas, minerales):
+    nombre_condado = nombre_condado.strip()
+
+    if nombre_condado == "":
+        return False
     for pais_actual in mapa:
         if pais_actual[0] == pais:
             for estado_actual in pais_actual[1]:
@@ -139,7 +145,6 @@ def agregar_condado(mapa, pais, estado, nombre_condado, coordenadas, minerales):
                     estado_actual[1].append(nuevo_condado)
                     guardar_mapa()
                     return True
-
     return False
 
 #Función para eliminar un condado
@@ -615,6 +620,9 @@ def limpiar_juego():
     for widget in area_juego.winfo_children():
         widget.destroy()
         
+    texto_juego.config(state="normal")
+    texto_juego.delete("1.0", tk.END)
+    texto_juego.config(state="disabled")
 
 #Es la caja de infromación del juego
 #Entradas: El texto para mostrar 
@@ -1155,6 +1163,10 @@ def limpiar_area_trabajo():
     for widget in area_trabajo.winfo_children():
         widget.destroy()
 
+    caja_resultado.config(state="normal")
+    caja_resultado.delete("1.0", tk.END)
+    caja_resultado.config(state="disabled")
+
 #Quita los espacios del texto 
 #Entrada: Texto
 #Salida: Texto
@@ -1383,6 +1395,10 @@ def pantalla_navegacion():
 #Entradas: pais, estado, condado, mineral
 #Salidas: un messagebox con el resultado de la operación
 def ejecutar_agregar_mineral(pais, estado, condado, mineral):
+    if mineral.strip() == "":
+        messagebox.showerror("Error", "Debe ingresar un mineral.")
+        return
+    
     resultado = agregar_mineral_a_condado(mapa, pais, estado, condado, mineral)
 
     if resultado:
@@ -1488,6 +1504,10 @@ def pantalla_minerales():
 #Función para agregar un condado al mapa
 #Entradas: pais, estado, nombre_condado, lon1_texto, lat1_texto, lon2_texto, lat2_texto, minerales_texto
 def agregar_condado_interfaz(pais, estado, nombre_condado, lon1_texto, lat1_texto, lon2_texto, lat2_texto, minerales_texto):
+    if nombre_condado.strip() == "":
+        messagebox.showerror("Error", "Debe ingresar el nombre del condado.")
+        return
+    
     lon1 = leer_coordenada(lon1_texto)
     lat1 = leer_coordenada(lat1_texto)
     lon2 = leer_coordenada(lon2_texto)
