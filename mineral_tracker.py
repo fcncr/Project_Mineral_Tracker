@@ -180,7 +180,7 @@ def coordenadas_a_decimal(coord):
 #Buscar un condado por su respectiva coordenada
 #Entradas: el mapa y las coordenadas de la longitud y latitud necesarias
 #Salidas: lista con la información donde se encontro el condado
-def buscar_condado_por_coordenadas(mapa, longitud, latitud):
+def buscar_condado_por_coordenadas(longitud, latitud):
     longitud_decimal = coordenadas_a_decimal(longitud)
     latitud_decimal = coordenadas_a_decimal(latitud)
 
@@ -564,7 +564,7 @@ def intentar_coordenada(longitud, latitud):
 
     intentos_restantes = intentos_restantes - 1
 
-    resultado = buscar_condado_por_coordenadas(mapa, longitud, latitud)
+    resultado = buscar_condado_por_coordenadas(longitud, latitud)
 
     if resultado == False:
         ubicacion_actual = []
@@ -846,8 +846,14 @@ def buscar_partida_interfaz():
 
     longitud = leer_coordenada(entrada_longitud_juego.get())
     latitud = leer_coordenada(entrada_latitud_juego.get())
+
     longitud_decimal = coordenadas_a_decimal(longitud)
     latitud_decimal = coordenadas_a_decimal(latitud)
+
+    if longitud == False or latitud == False:
+        messagebox.showerror("Error", "Use el formato grados,minutos,segundos.")
+        return
+    
     if longitud_decimal < -180 or longitud_decimal > 180:
         messagebox.showerror("Error", "La longitud debe estar entre -180 y 180.")
         return
@@ -1233,6 +1239,13 @@ def leer_coordenada(texto):
         grados = int(partes[0].strip())
         minutos = int(partes[1].strip())
         segundos = int(partes[2].strip())
+
+        if minutos < 0 or minutos > 59:
+            return False
+
+        if segundos < 0 or segundos > 59:
+            return False
+
         return [grados, minutos, segundos]
     except:
         return False
@@ -1269,7 +1282,7 @@ def buscar_condado_completo(pais, estado, condado):
 #Salidas: retorna lista con pais, estado y condado o false en otro caso
 def buscar_por_coordenadas_interfaz(longitud, latitud):
     try:
-        return buscar_condado_por_coordenadas(mapa, longitud, latitud)
+        return buscar_condado_por_coordenadas(longitud, latitud)
     except:
         return buscar_condado_por_coordenadas(longitud, latitud)
 
@@ -1501,9 +1514,24 @@ def pantalla_minerales():
 # ---------------------
 # PANTALLA: CONDADOS
 # ---------------------
+#Funcion auxiliar verificar rango de coordenadas
+#Entradas coordenadas y el tipo 
+#Salida: Boolean
+def coordenada_en_rango(coord, tipo):
+    decimal = coordenadas_a_decimal(coord)
+
+    if tipo == "longitud":
+        return decimal >= -180 and decimal <= 180
+
+    if tipo == "latitud":
+        return decimal >= -90 and decimal <= 90
+
+    return False
 #Función para agregar un condado al mapa
 #Entradas: pais, estado, nombre_condado, lon1_texto, lat1_texto, lon2_texto, lat2_texto, minerales_texto
 def agregar_condado_interfaz(pais, estado, nombre_condado, lon1_texto, lat1_texto, lon2_texto, lat2_texto, minerales_texto):
+
+    
     if nombre_condado.strip() == "":
         messagebox.showerror("Error", "Debe ingresar el nombre del condado.")
         return
@@ -1515,6 +1543,14 @@ def agregar_condado_interfaz(pais, estado, nombre_condado, lon1_texto, lat1_text
 
     if lon1 == False or lat1 == False or lon2 == False or lat2 == False:
         messagebox.showerror("Error", "Revise las coordenadas. Use: grados,minutos,segundos")
+        return
+    
+    if coordenada_en_rango(lon1, "longitud") == False or coordenada_en_rango(lon2, "longitud") == False:
+        messagebox.showerror("Error", "La longitud debe estar entre -180 y 180.")
+        return
+
+    if coordenada_en_rango(lat1, "latitud") == False or coordenada_en_rango(lat2, "latitud") == False:
+        messagebox.showerror("Error", "La latitud debe estar entre -90 y 90.")
         return
 
     coordenadas = [[lon1, lat1], [lon2, lat2]]
