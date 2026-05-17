@@ -847,22 +847,19 @@ def buscar_partida_interfaz():
     longitud = leer_coordenada(entrada_longitud_juego.get())
     latitud = leer_coordenada(entrada_latitud_juego.get())
 
-    longitud_decimal = coordenadas_a_decimal(longitud)
-    latitud_decimal = coordenadas_a_decimal(latitud)
-
     if longitud == False or latitud == False:
         messagebox.showerror("Error", "Use el formato grados,minutos,segundos.")
         return
     
+    longitud_decimal = coordenadas_a_decimal(longitud)
+    latitud_decimal = coordenadas_a_decimal(latitud)
+
     if longitud_decimal < -180 or longitud_decimal > 180:
         messagebox.showerror("Error", "La longitud debe estar entre -180 y 180.")
         return
 
     if latitud_decimal < -90 or latitud_decimal > 90:
         messagebox.showerror("Error", "La latitud debe estar entre -90 y 90.")
-        return
-    if longitud == False or latitud == False:
-        messagebox.showerror("Error", "Use el formato grados,minutos,segundos.")
         return
 
     resultado = intentar_coordenada(longitud, latitud)
