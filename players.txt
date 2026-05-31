@@ -1,1 +1,1 @@
-[]
+[['Issac', [['Plata', 'Spain', 'Cataluna', 'BarcelonaGrande', '2026-05-30 21:01:51'], ['Litio', 'Spain', 'Cataluna', 'BarcelonaGrande', '2026-05-30 21:01:54'], ['Grafito', 'Spain', 'Cataluna', 'BarcelonaGrande', '2026-05-30 21:01:56'], ['Oro', 'Spain', 'Cataluna', 'BarcelonaGrande', '2026-05-30 21:01:58'], ['Cobre', 'Spain', 'Cataluna', 'BarcelonaGrande', '2026-05-30 21:01:59'], ['Turquesa', 'Spain', 'Cataluna', 'BarcelonaGrande', '2026-05-30 21:02:01']]]]
